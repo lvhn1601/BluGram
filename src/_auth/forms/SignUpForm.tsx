@@ -2,6 +2,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { useForm } from "react-hook-form"
+import { useToast } from "@/components/ui/use-toast"
 
 import { Button } from '@/components/ui/button'
 import {
@@ -21,6 +22,7 @@ import { createUserAccount } from "@/lib/appwrite/api"
 
 
 const SignUpForm = () => {
+  const { toast } = useToast();
   const isLoading = false;
 
   // 1. Define your form.
@@ -39,7 +41,11 @@ const SignUpForm = () => {
     // create user
     const newUser = await createUserAccount(values);
 
-    console.log(newUser);
+    if (!newUser) {
+      return toast({
+        title: "Sign up failed. Please try again.",
+      })
+    }
   }
 
   return (
