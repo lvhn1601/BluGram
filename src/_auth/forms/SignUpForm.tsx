@@ -2,6 +2,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { useForm } from "react-hook-form"
+import { useToast } from "@/components/ui/use-toast"
 
 import { Button } from '@/components/ui/button'
 import {
@@ -15,13 +16,20 @@ import {
 import { Input } from "@/components/ui/input"
 import { SignUpValidation } from "@/lib/validation"
 import Loader from "@/components/shared/Loader"
-import { Link } from "react-router-dom"
-import { createUserAccount } from "@/lib/appwrite/api"
+import { Link, useNavigate } from "react-router-dom"
+import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations"
+import { useUserContext } from "@/context/AuthContext"
  
 
 
 const SignUpForm = () => {
-  const isLoading = false;
+  const { toast } = useToast();
+  const { checkAuthUser, isLoading: isUserLoading} = useUserContext();
+  const navigate = useNavigate();
+
+  const { mutateAsync: createUserAccount, isPending: isCreatingUser } = useCreateUserAccount();
+
+  const { mutateAsync: signInAccount, isPending: isSigningIn } = useSignInAccount();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignUpValidation>>({
@@ -39,7 +47,29 @@ const SignUpForm = () => {
     // create user
     const newUser = await createUserAccount(values);
 
-    console.log(newUser);
+    if (!newUser) {
+      return toast({
+        title: "Email already exist!",
+      })
+    }
+
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    })
+
+    if (!session) {
+      return toast({title: 'Sign in failed. Please try again.'})
+    }
+
+    const isLoggedIn = await checkAuthUser();
+
+    if (isLoggedIn) {
+      form.reset();
+      navigate('/');
+    } else {
+      toast({title: 'Sign up failed. Please try again.'});
+    }
   }
 
   return (
@@ -103,7 +133,7 @@ const SignUpForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary">
-            {isLoading ? (
+            {isCreatingUser || isUserLoading || isSigningIn ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading...
               </div>
@@ -112,7 +142,7 @@ const SignUpForm = () => {
 
           <p className="text-small-regular text-light-2 text-center">
             Already have an account?
-            <Link to='/sign-in' className="text-primary-500 text-small-semibold ml-1">Sign In</Link>
+            <Link to='/signin' className="text-primary-500 text-small-semibold ml-1">Sign In</Link>
           </p>
         </form>
       </div>
