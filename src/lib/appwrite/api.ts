@@ -67,8 +67,6 @@ export async function signInAccount(user: {
 
 export async function getCurrentUser() {
   try {
-    console.log(account);
-
     const currentAccount = await account.get();
 
     if (!currentAccount) throw Error;
@@ -84,5 +82,15 @@ export async function getCurrentUser() {
     return currentUser.documents[0];
   } catch (error) {
     console.log(error);
+  }
+}
+
+export async function signOutAccount() {
+  try {
+    const session = await account.deleteSession('current');
+
+    return session;
+  } catch (error) {
+    console.log(error)
   }
 }
