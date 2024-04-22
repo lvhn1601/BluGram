@@ -57,12 +57,15 @@ function PostCard({ post }: PostCardProps) {
             ))}
           </ul>
         </div>
-
-        <img
-          src={post.imageUrl || '/assets/icons/profile-placeholder.svg'}
-          className="post-card_img"
-          alt="post image"
-        />
+        
+        {post.imageId && 
+          <img
+            src={post.imageUrl || '/assets/icons/profile-placeholder.svg'}
+            className="post-card_img"
+            alt="post image"
+          />
+        }
+        
       </Link>
 
       <PostStats post={post} userId={user.id} />
