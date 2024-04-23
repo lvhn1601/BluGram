@@ -1,4 +1,4 @@
-import { INewPost, INewUser, IUpdatePost } from "@/types";
+import { INewComment, INewPost, INewUser, IUpdatePost } from "@/types";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 
 import { ID, Query } from 'appwrite';
@@ -385,6 +385,27 @@ export async function searchPost(searchTerm: string) {
     if (!posts) throw Error;
 
     return posts;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function createComment(comment: INewComment) {
+  try {
+    const newComment = databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.commentCollectionId,
+      ID.unique(),
+      {
+        user: comment.userId,
+        post: comment.postId,
+        details: comment.details,
+      }
+    )
+
+    if (!newComment) throw Error;
+
+    return newComment;
   } catch (error) {
     console.log(error)
   }

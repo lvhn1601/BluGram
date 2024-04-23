@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePost, getPostById, getRecentPosts, likePost, savePost, searchPost, signInAccount, signOutAccount, updatePost } from '../appwrite/api';
-import { INewPost, INewUser, IUpdatePost } from '@/types';
+import { createComment, createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePost, getPostById, getRecentPosts, likePost, savePost, searchPost, signInAccount, signOutAccount, updatePost } from '../appwrite/api';
+import { INewPost, INewUser, IUpdatePost, INewComment } from '@/types';
 import { QUERY_KEYS } from './queryKeys';
 
 export const useCreateUserAccount = () => {
@@ -164,5 +164,18 @@ export const useSearchPosts = (searchTerm: string) => {
     queryKey: [QUERY_KEYS.SEARCH_POSTS, searchTerm],
     queryFn: () => searchPost(searchTerm),
     enabled: !!searchTerm
+  })
+}
+
+export const useCreateComment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (comment: INewComment) => createComment(comment),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.$id]
+      })
+    }
   })
 }
