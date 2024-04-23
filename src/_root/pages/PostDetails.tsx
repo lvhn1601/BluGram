@@ -1,15 +1,22 @@
+import CommentForm from "@/components/forms/CommentForm";
+import CommentCard from "@/components/shared/CommentCard";
 import Loader from "@/components/shared/Loader";
 import PostStats from "@/components/shared/PostStats";
 import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/context/AuthContext";
 import { useGetPostById } from "@/lib/react-query/queriesAndMutations"
 import { multiFormatDateString } from "@/lib/utils";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 
 function PostDetails() {
   const { id } = useParams();
   const { data: post, isPending } = useGetPostById(id || '');
   const { user } = useUserContext();
+
+  useEffect(() => {
+    console.log(post?.comments);
+  }, [post])
 
   const handleDeletePost = () => {
 
@@ -74,7 +81,7 @@ function PostDetails() {
             <hr className="border w-full border-dark-4/80"/>
 
             <div className="flex flex-col flex-1 w-full small-medium lg:base-regular">
-              <p>{post?.caption}</p>
+              <p className="text-light-2 p-1">{post?.caption}</p>
               <ul className="flex gap-1 mt-2">
                 {post?.tags.map((tag: string) => (
                   <li key={tag} className="text-light-3">
@@ -82,10 +89,20 @@ function PostDetails() {
                   </li>
                 ))}
               </ul>
-            </div>
 
-            <div className="w-full">
-              <PostStats post={post} userId={user.id} />
+              <div className="w-full pt-5">
+                <PostStats post={post} userId={user.id} />
+              </div>
+
+              <div className="flex flex-col justify-between mt-6 p-5 bg-dark-3 rounded-lg gap-5">
+                <ul className="max-h-[300px]">
+                  {post?.comments.map((comment: any) => (
+                    <CommentCard key={comment.$id} comment={comment} />
+                  ))}
+                </ul>
+
+                <CommentForm postId={post?.$id} />
+              </div>
             </div>
           </div>
         </div>
