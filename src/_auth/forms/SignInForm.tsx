@@ -49,7 +49,14 @@ const SignInForm = () => {
       return toast({title: 'Invalid email or password!'})
     }
 
-    navigate('/')
+    const isLoggedIn = await checkAuthUser();
+
+    if (isLoggedIn) {
+      form.reset();
+      navigate('/');
+    } else {
+      toast({title: 'Sign up failed. Please try again.'});
+    }
   }
 
   return (
@@ -87,7 +94,7 @@ const SignInForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary">
-            {isUserLoading || isSigningIn ? (
+            {isSigningIn || isUserLoading ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading...
               </div>

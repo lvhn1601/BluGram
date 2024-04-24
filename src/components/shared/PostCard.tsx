@@ -1,11 +1,10 @@
 import { useUserContext } from "@/context/AuthContext";
 import { multiFormatDateString } from "@/lib/utils";
-import { Models } from "appwrite"
 import { Link } from "react-router-dom";
 import PostStats from "./PostStats";
 
 type PostCardProps = {
-  post: Models.Document;
+  post: any;
 }
 
 function PostCard({ post }: PostCardProps) {
@@ -15,9 +14,9 @@ function PostCard({ post }: PostCardProps) {
     <div className="post-card">
       <div className="flex-between">
         <div className="flex items-center gap-3">
-          <Link to={`/profile/${post.creator.$id}`}>
+          <Link to={`/profile/${post.creator.id}`}>
             <img
-              src={post?.creator?.imageUrl || '/assets/icons/profile-placeholder.svg'}
+              src={post.creator.imageUrl || '/assets/icons/profile-placeholder.svg'}
               alt="creator"
               className="rounded-full w-12 lg:h-12"
             />
@@ -29,7 +28,7 @@ function PostCard({ post }: PostCardProps) {
             </p>
             <div className="flex-center gap-2 text-light-3">
               <p className="subtle-semibold lg:small-regular">
-                {multiFormatDateString(post.$createdAt)}
+                {multiFormatDateString(post.created_at)}
               </p>
               -
               <p className="subtle-semibold lg:small-regular">
@@ -39,8 +38,8 @@ function PostCard({ post }: PostCardProps) {
           </div>
         </div>
 
-        {user.id === post.creator.$id && (
-          <Link to={`/update-post/${post.$id}`}>
+        {user.id === post.creator.id && (
+          <Link to={`/update-post/${post.id}`}>
             <img src="/assets/icons/edit.svg" alt="edit" width={20} height={20} />
           </Link>
         )}
@@ -58,7 +57,7 @@ function PostCard({ post }: PostCardProps) {
           </ul>
         </div>
         
-        {post.imageId && 
+        {post.imageUrl && 
           <img
             src={post.imageUrl || '/assets/icons/profile-placeholder.svg'}
             className="post-card_img"

@@ -17,19 +17,15 @@ import { Input } from "@/components/ui/input"
 import { SignUpValidation } from "@/lib/validation"
 import Loader from "@/components/shared/Loader"
 import { Link, useNavigate } from "react-router-dom"
-import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations"
-import { useUserContext } from "@/context/AuthContext"
+import { useCreateUserAccount } from "@/lib/react-query/queriesAndMutations"
  
 
 
 const SignUpForm = () => {
   const { toast } = useToast();
-  const { checkAuthUser, isLoading: isUserLoading} = useUserContext();
   const navigate = useNavigate();
 
   const { mutateAsync: createUserAccount, isPending: isCreatingUser } = useCreateUserAccount();
-
-  const { mutateAsync: signInAccount, isPending: isSigningIn } = useSignInAccount();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignUpValidation>>({
@@ -54,6 +50,8 @@ const SignUpForm = () => {
         title: error?.message,
       })
     }
+
+    navigate('/signin');
 
     return toast({
       title: 'Sign up successfully! Please check your email for vertification!',
@@ -121,7 +119,7 @@ const SignUpForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary">
-            {isCreatingUser || isUserLoading || isSigningIn ? (
+            {isCreatingUser ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading...
               </div>

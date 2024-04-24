@@ -9,58 +9,19 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      Comments: {
+      comment_likes: {
         Row: {
-          created_at: string
-          details: string | null
-          id: number
-          postId: string | null
-          userId: string | null
-        }
-        Insert: {
-          created_at?: string
-          details?: string | null
-          id?: number
-          postId?: string | null
-          userId?: string | null
-        }
-        Update: {
-          created_at?: string
-          details?: string | null
-          id?: number
-          postId?: string | null
-          userId?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Comments_postId_fkey"
-            columns: ["postId"]
-            isOneToOne: false
-            referencedRelation: "Posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Comments_userId_fkey"
-            columns: ["userId"]
-            isOneToOne: false
-            referencedRelation: "Users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      LikeComment: {
-        Row: {
-          commentId: number
+          commentId: string
           created_at: string
           userId: string
         }
         Insert: {
-          commentId: number
+          commentId: string
           created_at?: string
           userId: string
         }
         Update: {
-          commentId?: number
+          commentId?: string
           created_at?: string
           userId?: string
         }
@@ -69,19 +30,58 @@ export type Database = {
             foreignKeyName: "LikeComment_commentId_fkey"
             columns: ["commentId"]
             isOneToOne: false
-            referencedRelation: "Comments"
+            referencedRelation: "comments"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "LikeComment_userId_fkey"
             columns: ["userId"]
             isOneToOne: false
-            referencedRelation: "Users"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
       }
-      LikePost: {
+      comments: {
+        Row: {
+          created_at: string
+          details: string | null
+          id: string
+          postId: string | null
+          userId: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          postId?: string | null
+          userId?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          postId?: string | null
+          userId?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Comments_postId_fkey"
+            columns: ["postId"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Comments_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_likes: {
         Row: {
           created_at: string
           postId: string
@@ -99,63 +99,60 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "LikePost_postId_fkey"
+            foreignKeyName: "LikesPost_postId_fkey"
             columns: ["postId"]
             isOneToOne: false
-            referencedRelation: "Posts"
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "LikePost_userId_fkey"
+            foreignKeyName: "LikesPost_userId_fkey"
             columns: ["userId"]
             isOneToOne: false
-            referencedRelation: "Users"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
       }
-      Posts: {
+      posts: {
         Row: {
           caption: string | null
           created_at: string
           creator: string | null
           id: string
-          imageId: string | null
           imageUrl: string | null
           location: string | null
-          tags: string[]
+          tags: string[] | null
         }
         Insert: {
           caption?: string | null
           created_at?: string
           creator?: string | null
           id?: string
-          imageId?: string | null
           imageUrl?: string | null
           location?: string | null
-          tags: string[]
+          tags?: string[] | null
         }
         Update: {
           caption?: string | null
           created_at?: string
           creator?: string | null
           id?: string
-          imageId?: string | null
           imageUrl?: string | null
           location?: string | null
-          tags?: string[]
+          tags?: string[] | null
         }
         Relationships: [
           {
             foreignKeyName: "Posts_creator_fkey"
             columns: ["creator"]
             isOneToOne: false
-            referencedRelation: "Users"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
       }
-      Saves: {
+      saves: {
         Row: {
           created_at: string
           postId: string
@@ -176,19 +173,19 @@ export type Database = {
             foreignKeyName: "Saves_postId_fkey"
             columns: ["postId"]
             isOneToOne: false
-            referencedRelation: "Posts"
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "Saves_userId_fkey"
             columns: ["userId"]
             isOneToOne: false
-            referencedRelation: "Users"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
       }
-      Users: {
+      users: {
         Row: {
           accountId: string | null
           bio: string | null
