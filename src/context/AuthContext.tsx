@@ -1,4 +1,5 @@
-import { getCurrentUser } from '@/lib/appwrite/api';
+
+import { getCurrentUser } from '@/lib/supabase/api';
 import { IContextType, IUser } from '@/types'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -36,7 +37,7 @@ export const AuthProvider = ({ children } : { children: React.ReactNode}) => {
 
       if (currentAccount) {
         setUser({
-          id: currentAccount.$id,
+          id: currentAccount.id,
           name: currentAccount.name,
           username: currentAccount.username,
           email: currentAccount.email,
@@ -51,7 +52,6 @@ export const AuthProvider = ({ children } : { children: React.ReactNode}) => {
 
       return false;
     } catch (error) {
-      console.log(error);
       return false;
     } finally {
       setIsLoading(false);
@@ -59,10 +59,7 @@ export const AuthProvider = ({ children } : { children: React.ReactNode}) => {
   };
 
   useEffect(() => {
-    if (
-      localStorage.getItem('cookieFallback') === '[]' ||
-      localStorage.getItem('cookieFallback') === null
-    ) navigate('/signin');
+    if (localStorage.getItem('sb-etbbonlmqfuipuoxwbjp-auth-token') === null) navigate('/signin');
 
     checkAuthUser();
   }, [])

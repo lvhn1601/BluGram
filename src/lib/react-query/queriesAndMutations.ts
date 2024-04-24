@@ -1,7 +1,8 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createComment, createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePost, getPostById, getRecentPosts, likePost, savePost, searchPost, signInAccount, signOutAccount, updatePost } from '../appwrite/api';
+import { createComment, createPost, deletePost, deleteSavedPost, getInfinitePost, getPostById, getRecentPosts, likePost, savePost, searchPost, signOutAccount, updatePost } from '../appwrite/api';
 import { INewPost, INewUser, IUpdatePost, INewComment } from '@/types';
 import { QUERY_KEYS } from './queryKeys';
+import { createUserAccount, getCurrentUser, signInAccount } from '../supabase/api';
 
 export const useCreateUserAccount = () => {
   return useMutation({
