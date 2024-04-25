@@ -213,12 +213,6 @@ export async function postAction(action: string, userId: string, postId: string,
 
 export async function getPostById(postId: string) {
   try {
-    // const post = await databases.getDocument(
-    //   appwriteConfig.databaseId,
-    //   appwriteConfig.postCollectionId,
-    //   postId,
-    // )
-
     const { data: post, error } = await supabase
       .from('posts')
       .select(`
@@ -297,3 +291,4 @@ export async function updatePost(post: any) {
     console.log(error)
   }
 }
+
