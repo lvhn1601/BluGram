@@ -1,9 +1,7 @@
-import { useDeleteSavedPost, useGetCurrentUser, useLikePost, useSavePost } from "@/lib/react-query/queriesAndMutations";
+import { useGetCurrentUser, useLikePost, useSavePost } from "@/lib/react-query/queriesAndMutations";
 import { checkIsLiked } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import Loader from "./Loader";
-import { Tables } from "@/types/supabase-type";
-import { supabase } from "@/lib/supabase/config";
 
 type PostStatsProps = {
   post: any;

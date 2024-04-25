@@ -26,7 +26,7 @@ function PostDetails() {
     <div className="post_details-container">
       {isPending ? <Loader /> : (
         <div className="post_details-card">
-          {post?.imageId && 
+          {post?.imageUrl && 
             <img
               src={post?.imageUrl}
               alt="post"
@@ -36,7 +36,7 @@ function PostDetails() {
 
           <div className="post_details-info">
             <div className="flex-between w-full">
-              <Link to={`/profile/${post?.creator.$id}`} className="flex items-center gap-3">
+              <Link to={`/profile/${post?.creator.id}`} className="flex items-center gap-3">
                 <img
                   src={post?.creator?.imageUrl || '/assets/icons/profile-placeholder.svg'}
                   alt="creator"
@@ -49,7 +49,7 @@ function PostDetails() {
                   </p>
                   <div className="flex-center gap-2 text-light-3">
                     <p className="subtle-semibold lg:small-regular">
-                      {multiFormatDateString(post?.$createdAt)}
+                      {multiFormatDateString(post?.$created_at)}
                     </p>
                     -
                     <p className="subtle-semibold lg:small-regular">
@@ -60,9 +60,9 @@ function PostDetails() {
               </Link>
 
               <div className="flex-center">
-                {user.id === post?.creator.$id && 
+                {user.id === post?.creator.id && 
                   <>
-                    <Link to={`/update-post/${post?.$id}`}>
+                    <Link to={`/update-post/${post?.id}`}>
                       <img src="/assets/icons/edit.svg" alt="edit" width={24} height={24} />
                     </Link>
 
@@ -94,15 +94,15 @@ function PostDetails() {
                 <PostStats post={post} userId={user.id} />
               </div>
 
-              <div className="flex flex-col justify-between mt-6 p-5 bg-dark-3 rounded-lg gap-5">
+              {/* <div className="flex flex-col justify-between mt-6 p-5 bg-dark-3 rounded-lg gap-5">
                 <ul className="max-h-[300px]">
                   {post?.comments.map((comment: any) => (
-                    <CommentCard key={comment.$id} comment={comment} />
+                    <CommentCard key={comment.id} comment={comment} />
                   ))}
                 </ul>
 
-                <CommentForm postId={post?.$id} />
-              </div>
+                <CommentForm postId={post?.id} />
+              </div> */}
             </div>
           </div>
         </div>

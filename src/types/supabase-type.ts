@@ -120,6 +120,7 @@ export type Database = {
           created_at: string
           creator: string | null
           id: string
+          imagePath: string | null
           imageUrl: string | null
           location: string | null
           tags: string[] | null
@@ -129,6 +130,7 @@ export type Database = {
           created_at?: string
           creator?: string | null
           id?: string
+          imagePath?: string | null
           imageUrl?: string | null
           location?: string | null
           tags?: string[] | null
@@ -138,6 +140,7 @@ export type Database = {
           created_at?: string
           creator?: string | null
           id?: string
+          imagePath?: string | null
           imageUrl?: string | null
           location?: string | null
           tags?: string[] | null

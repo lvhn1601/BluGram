@@ -1,8 +1,8 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createComment, deletePost, deleteSavedPost, getInfinitePost, getPostById, searchPost, updatePost } from '../appwrite/api';
+import { createComment, deletePost, getInfinitePost, searchPost } from '../appwrite/api';
 import { INewPost, INewUser, IUpdatePost, INewComment } from '@/types';
 import { QUERY_KEYS } from './queryKeys';
-import { createPost, createUserAccount, getCurrentUser, getRecentPosts, postAction, signInAccount, signOutAccount } from '../supabase/api';
+import { createPost, createUserAccount, getCurrentUser, getPostById, getRecentPosts, postAction, signInAccount, signOutAccount, updatePost } from '../supabase/api';
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -51,9 +51,9 @@ export const useLikePost = () => {
   return useMutation({
     mutationFn: ({ userId, postId, liked }: { userId: string, postId: string; liked: boolean}) => postAction('post_likes', userId, postId, liked),
     onSuccess: (data) => {
-      // queryClient.invalidateQueries({
-      //   queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.id]
-      // })
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.id]
+      })
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_RECENT_POSTS]
       })
@@ -86,25 +86,6 @@ export const useSavePost = () => {
   })
 }
 
-export const useDeleteSavedPost = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: (saveRecordId: string) => deleteSavedPost(saveRecordId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_RECENT_POSTS]
-      })
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_POSTS]
-      })
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_CURRENT_USER]
-      })
-    }
-  })
-}
-
 export const useGetCurrentUser = () => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_CURRENT_USER],
@@ -124,10 +105,10 @@ export const useUpdatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (post: IUpdatePost) => updatePost(post),
+    mutationFn: (post: any) => updatePost(post),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.$id]
+        queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.id]
       })
     }
   })

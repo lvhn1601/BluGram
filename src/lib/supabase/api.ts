@@ -81,28 +81,30 @@ export async function signOutAccount() {
 
 export async function createPost(post: INewPost) {
   try {
-    let imgPath, imageUrl;
+    let imagePath, imageUrl;
 
     const hasImage = post.file?.length > 0;
 
     // handle upload if having image
     if (hasImage) {
+      // create file name for image
       const newImageName = post.userId + Date.now().toString();
+
+      // upload file
       const uploadedFile = await uploadFile(post.file[0], newImageName);
   
       if (!uploadedFile) throw Error;
+
+      imagePath = uploadedFile.path;
   
-      const { data: { publicUrl: fileUrl } } = supabase.storage.from('media').getPublicUrl(uploadedFile.path)
-      if (!fileUrl) {
-        await deleteFile(uploadedFile.path);
-        throw Error;
-      }
+      // get public url of image
+      const { data: { publicUrl: fileUrl } } = supabase.storage.from('media').getPublicUrl(imagePath)
 
       imageUrl = fileUrl;
     }
 
     // Convert tags into array
-    const tags = post.tags?.replace(/ /g, '').split(',') || [];
+    const tags = (post.tags === '' ? [] : post.tags?.replace(/ /g, '').split(',')) || [];
 
     // create post
     const { data: newPost, error } = await supabase
@@ -111,6 +113,7 @@ export async function createPost(post: INewPost) {
         creator: post.userId,
         caption: post.caption,
         imageUrl,
+        imagePath,
         location: post.location,
         tags,
       })
@@ -118,8 +121,8 @@ export async function createPost(post: INewPost) {
 
     // delete uploaded file if failed to create post
     if (error) {
-      if (hasImage && imgPath)
-        await deleteFile(imgPath);
+      if (hasImage && imagePath)
+        await deleteFile(imagePath);
       throw Error;
     }
 
@@ -201,6 +204,95 @@ export async function postAction(action: string, userId: string, postId: string,
 
       if (error) throw error
     }
+
+    return { id: postId }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function getPostById(postId: string) {
+  try {
+    // const post = await databases.getDocument(
+    //   appwriteConfig.databaseId,
+    //   appwriteConfig.postCollectionId,
+    //   postId,
+    // )
+
+    const { data: post, error } = await supabase
+      .from('posts')
+      .select(`
+      *,
+      creator (
+        id,
+        name,
+        imageUrl
+      ),
+      post_likes(
+        userId
+      )
+    `)
+    .eq('id', postId)
+    .maybeSingle()
+
+    if (error) throw error
+
+    return post;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function updatePost(post: any) {
+  const hasFileToUpdate = post.file?.length > 0; // check if has file to update
+  const hasDeletedImage = !hasFileToUpdate && post.imageUrl != null; // check if creator deleted old file
+
+  try {
+    let imagePath = post.imagePath, imageUrl = post.imageUrl
+
+    if (hasFileToUpdate) {
+      // generate file name for image
+      const newImageName = post.userId + Date.now().toString();
+      // upload image into storage
+      const uploadedFile = await uploadFile(post.file[0], newImageName);
+  
+      if (!uploadedFile) throw Error;
+  
+      imagePath = uploadedFile.path;
+  
+      // get the public url of uploaded image
+      const { data: { publicUrl: fileUrl } } = supabase.storage.from('media').getPublicUrl(imagePath)
+
+      imageUrl = fileUrl;
+    }
+
+    // Convert tags into array
+    const tags = (post.tags === '' ? [] : post.tags?.replace(/ /g, '').split(',')) || [];
+
+    // update post and get the result (array)
+    const { data: updatedPost, error } = await supabase
+      .from('posts')
+      .update({
+        caption: post.caption,
+        imageUrl: hasDeletedImage ? null : imageUrl,
+        imagePath: hasDeletedImage ? null : imagePath,
+        location: post.location,
+        tags,
+      })
+      .eq('id', post.postId)
+      .select()
+
+    if (error) {
+      await deleteFile(imagePath);
+      throw error;
+    }
+
+    // delete old image when update succesful
+    if (hasFileToUpdate || hasDeletedImage) {
+      await deleteFile(post.imagePath);
+    }
+
+    return updatedPost[0];
   } catch (error) {
     console.log(error)
   }

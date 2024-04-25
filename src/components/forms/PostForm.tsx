@@ -45,8 +45,9 @@ function PostForm({ post, action }: PostFormProps) {
     if (post && action === 'Update') {
       const updatedPost = await updatePost({
         ...values,
-        postId: post.$id,
-        imageId: post?.imageId,
+        userId: user.id,
+        postId: post.id,
+        imagePath: post?.imagePath,
         imageUrl: post?.imageUrl,
       })
 
@@ -56,7 +57,7 @@ function PostForm({ post, action }: PostFormProps) {
         })
       }
 
-      return navigate(`/posts/${post.$id}`)
+      return navigate(`/posts/${post.id}`)
     }
 
     const newPost = await createPost({
