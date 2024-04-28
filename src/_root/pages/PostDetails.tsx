@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/context/AuthContext";
 import { useGetPostById } from "@/lib/react-query/queriesAndMutations"
 import { multiFormatDateString } from "@/lib/utils";
-import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 
 function PostDetails() {
@@ -45,7 +44,7 @@ function PostDetails() {
                   </p>
                   <div className="flex-center gap-2 text-light-3">
                     <p className="subtle-semibold lg:small-regular">
-                      {multiFormatDateString(post?.$created_at)}
+                      {multiFormatDateString(post?.created_at)}
                     </p>
                     -
                     <p className="subtle-semibold lg:small-regular">

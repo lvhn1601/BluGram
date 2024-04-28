@@ -1,7 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { deletePost, getInfinitePost, searchPost } from '../appwrite/api';
 import { QUERY_KEYS } from './queryKeys';
-import { createComment, createPost, createUserAccount, getCurrentUser, getPostById, getRecentPosts, postAction, signInAccount, signOutAccount, updatePost } from '../supabase/api';
+import { createComment, createPost, createUserAccount, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, postAction, searchPost, signInAccount, signOutAccount, updatePost } from '../supabase/api';
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -54,11 +53,8 @@ export const useLikePost = () => {
         queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.id]
       })
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_RECENT_POSTS]
+        queryKey: [QUERY_KEYS.GET_POSTS]
       })
-      // queryClient.invalidateQueries({
-      //   queryKey: [QUERY_KEYS.GET_POSTS]
-      // })
     }
   })
 }
@@ -72,9 +68,6 @@ export const useSavePost = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_RECENT_POSTS]
       })
-      // queryClient.invalidateQueries({
-      //   queryKey: [QUERY_KEYS.GET_POSTS]
-      // })
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_CURRENT_USER]
       })
@@ -136,19 +129,20 @@ export const useCreateComment = () => {
 //   })
 // }
 
-// export const useGetPosts = () => {
-//   return useInfiniteQuery({
-//     queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
-//     queryFn: getInfinitePost,
-//     getNextPageParam: (lastPage) => {
-//       if (lastPage && lastPage.documents.length === 0)
-//         return null;
-//       const lastId = lastPage.documents[lastPage?.documents.length-1].?id;
+export const useGetPosts = () => {
+  return useInfiniteQuery({
+    queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
+    queryFn: getInfinitePosts,
+    getNextPageParam: (lastPage) => {
+      if (lastPage && lastPage.length === 0) {
+        return null;
+      }
 
-//       return lastId;
-//     }
-//   })
-// }
+      const lastId = lastPage[lastPage.length - 1].id;
+      return lastId;
+    },
+  })
+}
 
 export const useSearchPosts = (searchTerm: string) => {
   return useQuery({

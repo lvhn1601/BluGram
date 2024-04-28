@@ -1,39 +1,39 @@
-// import GridPostList from "@/components/shared/GridPostList";
-// import Loader from "@/components/shared/Loader";
-// import SearchResults from "@/components/shared/SearchResults";
-// import { Input } from "@/components/ui/input"
-// import useDebounce from "@/hooks/useDebounce";
-// import { useGetPosts, useSearchPosts } from "@/lib/react-query/queriesAndMutations";
-// import { useEffect, useState } from "react"
-// import { useInView } from "react-intersection-observer";
+import GridPostList from "@/components/shared/GridPostList";
+import Loader from "@/components/shared/Loader";
+import SearchResults from "@/components/shared/SearchResults";
+import { Input } from "@/components/ui/input"
+import useDebounce from "@/hooks/useDebounce";
+import { useGetPosts, useSearchPosts } from "@/lib/react-query/queriesAndMutations";
+import { useEffect, useState } from "react"
+import { useInView } from "react-intersection-observer";
 
 function Explore() {
-  // const { ref, inView } = useInView();
-  // const { data: posts, fetchNextPage, hasNextPage } = useGetPosts();
+  const { ref, inView } = useInView();
+  const { data: posts, fetchNextPage, hasNextPage } = useGetPosts();
 
-  // const [searchValue, setSearchValue] = useState('');
-  // const debouncedValue = useDebounce(searchValue, 500);
-  // const { data: searchedPosts, isPending: isSearchFetching } = useSearchPosts(debouncedValue);
+  const [searchValue, setSearchValue] = useState('');
+  const debouncedValue = useDebounce(searchValue, 500);
+  const { data: searchedPosts, isPending: isSearchFetching } = useSearchPosts(debouncedValue);
 
-  // useEffect(() => {
-  //   if (inView && !searchValue)
-  //     fetchNextPage();
-  // }, [inView, searchValue])
+  useEffect(() => {
+    if (inView && !searchValue)
+      fetchNextPage();
+  }, [inView, searchValue])
 
-  // if (!posts) {
-  //   return (
-  //     <div className="flex-center w-full h-full">
-  //       <Loader />
-  //     </div>
-  //   )
-  // }
+  if (!posts) {
+    return (
+      <div className="flex-center w-full h-full">
+        <Loader />
+      </div>
+    )
+  }
 
-  // const shouldShowSearchResults = searchValue !== '';
-  // const shouldShowPosts = !shouldShowSearchResults && posts.pages.every((item) => item.documents.length === 0)
+  const shouldShowSearchResults = searchValue !== '';
+  const shouldShowPosts = !shouldShowSearchResults && posts.pages.every((item) => item.length === 0)
 
   return (
     <div className="explore-container">
-      {/* <div className="explore-inner_container">
+      <div className="explore-inner_container">
         <h2 className="h3-bold md:h2-bold w-full">Search Posts</h2>
         <div className="flex gap-1 px-4 w-full rounded-lg bg-dark-4">
           <img
@@ -76,7 +76,7 @@ function Explore() {
           <p className="text-light-4 mt-10 text-center w-full">End of posts</p>
         ) : (
           posts.pages.map((item, index) => (
-            <GridPostList key={`page-${index}`} posts={item.documents} />
+            <GridPostList key={`page-${index}`} posts={item} />
           ))
         )}
       </div>
@@ -85,7 +85,7 @@ function Explore() {
         <div ref={ref} className="mt-10">
           <Loader />
         </div>
-      )} */}
+      )}
     </div>
   )
 }

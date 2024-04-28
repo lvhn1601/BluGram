@@ -1,9 +1,8 @@
 import { multiFormatDateString } from "@/lib/utils";
-import { Models } from "appwrite"
 import { Link } from "react-router-dom";
 
 type CommentCardProps = {
-  comment: Models.Document;
+  comment: any;
 }
 
 export default function CommentCard({ comment }: CommentCardProps) {

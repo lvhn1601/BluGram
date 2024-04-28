@@ -1,7 +1,7 @@
 import { INewPost, INewUser } from "@/types";
 import { supabase } from "./config";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase-type";
 
+// ----- AUTHENTICATION -----
 export async function createUserAccount(user: INewUser) {
   const { data, error } = await supabase.auth.signUp({
     email: user.email,
@@ -79,6 +79,8 @@ export async function signOutAccount() {
     console.log(error)
   }
 }
+
+// ----- POST FUNCTION -----
 
 export async function createPost(post: INewPost) {
   try {
@@ -300,6 +302,68 @@ export async function updatePost(post: any) {
   }
 }
 
+// todo: deletePost
+
+export async function getInfinitePosts({ pageParam }: { pageParam: number}) {
+  try {
+    const { data: posts, error} = await supabase
+      .from('posts')
+      .select(`
+      *,
+      creator (
+        id,
+        name,
+        imageUrl
+      ),
+      post_likes(
+        userId
+      )
+    `)
+    .limit(10)
+    .order('created_at', { ascending: false })
+    .not('imageUrl', 'is', null)
+    .range(
+      pageParam ? (pageParam - 1) * 10 : 0,
+      pageParam ? pageParam * 10 - 1 : 10
+    )
+
+    if (error) throw error;
+
+    console.log(posts)
+
+    return posts;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function searchPost(searchTerm: string) {
+  try {
+    const { data: posts, error} = await supabase
+    .from('posts')
+    .select(`
+    *,
+    creator (
+      id,
+      name,
+      imageUrl
+    ),
+    post_likes(
+      userId
+    )
+  `)
+  .ilike('caption', `%${searchTerm}%`)
+
+    if (error) throw error;
+
+    return posts;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// ----- COMMENT FUNCTIONS -----
+
 export async function createComment(comment: any) {
   try {
     console.log(comment)
@@ -316,3 +380,4 @@ export async function createComment(comment: any) {
     console.log(error)
   }
 }
+
