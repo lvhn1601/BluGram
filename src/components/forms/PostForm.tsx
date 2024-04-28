@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "../ui/textarea"
 import FileUploader from "../shared/FileUploader"
 import { PostValidation } from "@/lib/validation"
-import { Models } from "appwrite"
 import { useCreatePost, useUpdatePost } from "@/lib/react-query/queriesAndMutations"
 import { useUserContext } from "@/context/AuthContext"
 import { useToast } from "../ui/use-toast"
@@ -16,7 +15,7 @@ import { useNavigate } from "react-router-dom"
 import Loader from "../shared/Loader"
 
 type PostFormProps = {
-  post?: Models.Document;
+  post?: any;
   action: 'Create' | 'Update';
 }
 
@@ -45,8 +44,9 @@ function PostForm({ post, action }: PostFormProps) {
     if (post && action === 'Update') {
       const updatedPost = await updatePost({
         ...values,
-        postId: post.$id,
-        imageId: post?.imageId,
+        userId: user.id,
+        postId: post.id,
+        imagePath: post?.imagePath,
         imageUrl: post?.imageUrl,
       })
 
@@ -56,7 +56,7 @@ function PostForm({ post, action }: PostFormProps) {
         })
       }
 
-      return navigate(`/posts/${post.$id}`)
+      return navigate(`/posts/${post.id}`)
     }
 
     const newPost = await createPost({

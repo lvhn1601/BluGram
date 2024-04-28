@@ -46,7 +46,7 @@ const SignInForm = () => {
     })
 
     if (!session) {
-      return toast({title: 'Sign in failed. Please try again.'})
+      return toast({title: 'Invalid email or password!'})
     }
 
     const isLoggedIn = await checkAuthUser();
@@ -94,7 +94,7 @@ const SignInForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary">
-            {isUserLoading || isSigningIn ? (
+            {isSigningIn || isUserLoading ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading...
               </div>
