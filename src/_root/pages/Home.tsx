@@ -3,7 +3,7 @@ import PostCard from "@/components/shared/PostCard";
 import { useGetRecentPosts } from "@/lib/react-query/queriesAndMutations";
 
 const Home = () => {
-  const { data: posts, isPending: isPostLoading, isError: isErrorPost } = useGetRecentPosts();
+  const { data: posts, isPending: isPostLoading } = useGetRecentPosts();
 
   // console.log(posts)
 

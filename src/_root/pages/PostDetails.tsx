@@ -14,10 +14,6 @@ function PostDetails() {
   const { data: post, isPending } = useGetPostById(id || '');
   const { user } = useUserContext();
 
-  useEffect(() => {
-    console.log(post?.comments);
-  }, [post])
-
   const handleDeletePost = () => {
 
   }
@@ -91,10 +87,10 @@ function PostDetails() {
               </ul>
 
               <div className="w-full pt-5">
-                <PostStats post={post} userId={user.id} />
+                <PostStats post={post} userId={user.id} commentBtn={false} />
               </div>
 
-              {/* <div className="flex flex-col justify-between mt-6 p-5 bg-dark-3 rounded-lg gap-5">
+              <div className="flex flex-col justify-between mt-6 p-5 bg-dark-3 rounded-lg gap-5">
                 <ul className="max-h-[300px]">
                   {post?.comments.map((comment: any) => (
                     <CommentCard key={comment.id} comment={comment} />
@@ -102,7 +98,7 @@ function PostDetails() {
                 </ul>
 
                 <CommentForm postId={post?.id} />
-              </div> */}
+              </div>
             </div>
           </div>
         </div>

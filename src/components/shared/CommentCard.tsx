@@ -9,9 +9,9 @@ type CommentCardProps = {
 export default function CommentCard({ comment }: CommentCardProps) {
   return (
     <div className="flex gap-3">
-      <Link to={`/profile`} className="min-w-7">
+      <Link to={`/profile/${comment.creator.id}`} className="min-w-7">
         <img
-          src={comment?.user?.imageUrl || '/assets/icons/profile-placeholder.svg'}
+          src={comment?.creator?.imageUrl || '/assets/icons/profile-placeholder.svg'}
           alt="creator"
           className="rounded-full w-7 h-7"
         />
@@ -19,11 +19,11 @@ export default function CommentCard({ comment }: CommentCardProps) {
 
       <div className="flex flex-col">
         <div className="flex items-center gap-1">
-          <Link to={`/profile`} className="base-medium lg-body-bold text-light-1">
-            {comment?.user?.name}
+          <Link to={`/profile/${comment.creator.id}`} className="base-medium lg-body-bold text-light-1">
+            {comment?.creator?.name}
           </Link>
           <p className="small-semibold lg:small-regular text-light-3">
-            {multiFormatDateString(comment?.$createdAt)}
+            {multiFormatDateString(comment?.created_at)}
           </p>
         </div>
 

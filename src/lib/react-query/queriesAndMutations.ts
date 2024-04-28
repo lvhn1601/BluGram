@@ -1,7 +1,7 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createComment, deletePost, getInfinitePost, searchPost } from '../appwrite/api';
+import { deletePost, getInfinitePost, searchPost } from '../appwrite/api';
 import { QUERY_KEYS } from './queryKeys';
-import { createPost, createUserAccount, getCurrentUser, getPostById, getRecentPosts, postAction, signInAccount, signOutAccount, updatePost } from '../supabase/api';
+import { createComment, createPost, createUserAccount, getCurrentUser, getPostById, getRecentPosts, postAction, signInAccount, signOutAccount, updatePost } from '../supabase/api';
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -117,7 +117,7 @@ export const useCreateComment = () => {
     mutationFn: (comment: any) => createComment(comment),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.$id]
+        queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.postId]
       })
     }
   })

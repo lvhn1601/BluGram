@@ -1,5 +1,6 @@
 import { INewPost, INewUser } from "@/types";
 import { supabase } from "./config";
+import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase-type";
 
 export async function createUserAccount(user: INewUser) {
   const { data, error } = await supabase.auth.signUp({
@@ -172,7 +173,8 @@ export async function getRecentPosts() {
       ),
       post_likes(
         userId
-      )
+      ),
+      comments(id)
     `)
     .limit(20)
     .order('created_at', { ascending: false })
@@ -224,6 +226,12 @@ export async function getPostById(postId: string) {
       ),
       post_likes(
         userId
+      ),
+      comments(
+        id,
+        details,
+        created_at,
+        creator:users!Comments_userId_fkey(id, name, imageUrl)
       )
     `)
     .eq('id', postId)
@@ -292,3 +300,19 @@ export async function updatePost(post: any) {
   }
 }
 
+export async function createComment(comment: any) {
+  try {
+    console.log(comment)
+
+    const { data: newComment, error } = await supabase
+      .from('comments')
+      .insert(comment)
+      .select()
+
+    if (error) throw error;
+
+    return newComment[0];
+  } catch (error) {
+    console.log(error)
+  }
+}

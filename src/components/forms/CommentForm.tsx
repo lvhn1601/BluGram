@@ -17,6 +17,7 @@ type CommentFormProps = {
 
 function CommentForm({ postId }: CommentFormProps) {
   const { user } = useUserContext();
+  
   const { mutateAsync: createComment, isPending: isLoadingCreate } = useCreateComment();
   
   const { toast } = useToast();
@@ -31,13 +32,13 @@ function CommentForm({ postId }: CommentFormProps) {
  
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof CommentValidation>) {
-    const newPost = await createComment({
+    const newComment = await createComment({
       ...values,
       userId: user.id,
       postId: postId || '',
     })
 
-    if (!newPost) {
+    if (!newComment) {
       toast({
         title: 'Comment failed. Please try again!',
       })
