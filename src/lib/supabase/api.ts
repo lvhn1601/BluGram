@@ -375,8 +375,6 @@ export async function searchPost(searchTerm: string) {
 
 export async function createComment(comment: any) {
   try {
-    console.log(comment)
-
     const { data: newComment, error } = await supabase
       .from('comments')
       .insert(comment)
@@ -407,3 +405,24 @@ export async function getUsers() {
   }
 }
 
+export async function getUserById(userId: string) {
+  try {
+    const { data: user, error } = await supabase
+      .from('users')
+      .select(`
+        *,
+        posts!Posts_creator_fkey(*)
+      `)
+      .eq('id', userId)
+      .limit(1)
+      .maybeSingle()
+
+    if (error) throw error;
+
+    console.log(user)
+
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
+}
