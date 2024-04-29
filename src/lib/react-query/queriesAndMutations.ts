@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from './queryKeys';
-import { createComment, createPost, createUserAccount, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, postAction, searchPost, signInAccount, signOutAccount, updatePost } from '../supabase/api';
+import { createComment, createPost, createUserAccount, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUsers, postAction, searchPost, signInAccount, signOutAccount, updatePost } from '../supabase/api';
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -151,3 +151,10 @@ export const useSearchPosts = (searchTerm: string) => {
     enabled: !!searchTerm
   })
 }
+
+export const useGetUsers = () => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USERS],
+    queryFn: () => getUsers(),
+  });
+};

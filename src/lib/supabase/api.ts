@@ -390,3 +390,20 @@ export async function createComment(comment: any) {
   }
 }
 
+// ----- USERS FUNCTIONS -----
+
+export async function getUsers() {
+  try {
+    const { data: users, error } = await supabase
+      .from('users')
+      .select()
+      .order('created_at', { ascending: false })
+
+    if (error) throw error;
+
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
