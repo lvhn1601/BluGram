@@ -260,8 +260,8 @@ export async function getPostById(postId: string) {
 
 export async function updatePost(post: any) {
   const hasFileToUpdate = post.file?.length > 0; // check if has file to update
-  const hasDeletedImage = !hasFileToUpdate && post.imageUrl != null; // check if creator deleted old file
-
+  const hasDeletedImage = post.deletedFile; // check if creator deleted old file
+  
   try {
     let imagePath = post.imagePath, imageUrl = post.imageUrl
 

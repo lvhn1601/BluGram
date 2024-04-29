@@ -13,6 +13,7 @@ import { useUserContext } from "@/context/AuthContext"
 import { useToast } from "../ui/use-toast"
 import { useNavigate } from "react-router-dom"
 import Loader from "../shared/Loader"
+import { useState } from "react"
 
 type PostFormProps = {
   post?: any;
@@ -20,6 +21,8 @@ type PostFormProps = {
 }
 
 function PostForm({ post, action }: PostFormProps) {
+  const [deletedFile, setDeletedFile] = useState(false);
+
   const {mutateAsync: createPost, isPending: isLoadingCreate } = useCreatePost();
   const {mutateAsync: updatePost, isPending: isLoadingUpdate } = useUpdatePost();
   const { user } = useUserContext();
@@ -48,6 +51,7 @@ function PostForm({ post, action }: PostFormProps) {
         postId: post.id,
         imagePath: post?.imagePath,
         imageUrl: post?.imageUrl,
+        deletedFile,
       })
 
       if (!updatedPost) {
@@ -100,6 +104,7 @@ function PostForm({ post, action }: PostFormProps) {
                 <FileUploader
                   fieldChange={field.onChange}
                   mediaUrl={post?.imageUrl}
+                  setDelete={setDeletedFile}
                 />
               </FormControl>
               <FormMessage className="shad-form_message" />
