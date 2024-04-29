@@ -1,17 +1,22 @@
 import { Link } from "react-router-dom";
 
 type GridPostListProps = {
-  posts: any[];
+  posts: any[] | undefined;
   showUser?: boolean;
 }
 
 function GridPostList({ posts, showUser = true }: GridPostListProps) {
   return (
     <ul className="grid-container">
-      {posts.map((post) => (
+      {posts?.map((post) => (
         <li key={post.id} className="relative min-w-80 aspect-square">
           <Link to={`/posts/${post.id}`} className="grid-post_link">
-            <img src={post.imageUrl} alt="post" className="h-full w-full object-cover" />
+            {post.imageUrl
+              ? <img src={post.imageUrl} alt="post" className="h-full w-full object-cover" />
+              : <div className="flex justify-center p-4 h-full w-full">
+                {post.caption}
+              </div>
+            }
           </Link>
 
           <div className="grid-post_user">

@@ -217,6 +217,16 @@
     @apply absolute bottom-0 p-5 flex-between w-full bg-gradient-to-t from-dark-3 to-transparent rounded-b-[24px] gap-2;
   }
 
+  /* Text Post List */
+
+  .text-post-container {
+    @apply w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-1 max-w-5xl;
+  }
+
+  .text-post-link {
+    @apply rounded-[24px] p-4 border border-dark-4 overflow-hidden cursor-pointer w-full max-h-[200px];
+  }
+
   /* Left sidebar */
   .leftsidebar {
     @apply hidden md:flex px-6 py-10 flex-col justify-between min-w-[270px] bg-dark-2;

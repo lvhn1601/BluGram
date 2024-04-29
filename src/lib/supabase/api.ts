@@ -56,7 +56,18 @@ export async function getCurrentUser() {
     .select(`
       *,
       saves(
-        postId
+        postId,
+        posts(
+          *,
+          creator (
+            id,
+            name,
+            imageUrl
+          ),
+          post_likes(
+            userId
+          )
+        )
       )
     `)
     .eq('accountId', currentAccount.id)
@@ -329,8 +340,6 @@ export async function getInfinitePosts({ pageParam }: { pageParam: number}) {
 
     if (error) throw error;
 
-    console.log(posts)
-
     return posts;
   } catch (error) {
     console.log(error)
@@ -342,17 +351,17 @@ export async function searchPost(searchTerm: string) {
     const { data: posts, error} = await supabase
     .from('posts')
     .select(`
-    *,
-    creator (
-      id,
-      name,
-      imageUrl
-    ),
-    post_likes(
-      userId
-    )
-  `)
-  .ilike('caption', `%${searchTerm}%`)
+      *,
+      creator (
+        id,
+        name,
+        imageUrl
+      ),
+      post_likes(
+        userId
+      )
+    `)
+    .ilike('caption', `%${searchTerm}%`)
 
     if (error) throw error;
 
