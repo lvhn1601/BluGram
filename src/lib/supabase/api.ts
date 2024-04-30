@@ -442,6 +442,58 @@ export async function getUserById(userId: string) {
   }
 }
 
+export async function updateUser(user: any) {
+  const hasFileToUpdate = user.file?.length > 0; // check if has file to update
+  const hasDeletedImage = user.deletedFile; // check if creator deleted old file
+  
+  try {
+    let imagePath = user.imagePath, imageUrl = user.imageUrl
+
+    if (hasFileToUpdate) {
+      // generate file name for image
+      const newImageName = user.id + Date.now().toString();
+      // upload image into storage
+      const uploadedFile = await uploadFile(user.file[0], newImageName);
+  
+      if (!uploadedFile) throw Error;
+  
+      imagePath = uploadedFile.path;
+  
+      // get the public url of uploaded image
+      const { data: { publicUrl: fileUrl } } = supabase.storage.from('media').getPublicUrl(imagePath)
+
+      imageUrl = fileUrl;
+    }
+
+    const { data: updatedUser, error } = await supabase
+      .from('users')
+      .update({
+        name: user.name,
+        bio: user.bio,
+        imageUrl: hasDeletedImage ? null : imageUrl,
+        imagePath: hasDeletedImage ? null : imagePath,
+      })
+      .eq('id', user.id)
+      .select()
+
+    if (error) {
+      if (hasFileToUpdate)
+        await deleteFile(imagePath)
+
+      throw error;
+    }
+
+    // delete old image when update succesful
+    if (hasFileToUpdate || hasDeletedImage) {
+      await deleteFile(user.imagePath);
+    }
+
+    return updatedUser[0]
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export async function followAction(followed: boolean, userId: string, followBy: string) {
   try {
     if (!followed) {

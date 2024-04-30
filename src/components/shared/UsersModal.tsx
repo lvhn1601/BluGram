@@ -1,5 +1,5 @@
 import React from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Link } from "react-router-dom";
 
 type UsersModalProps = {
@@ -25,7 +25,7 @@ export function UsersModal({ children, title, users }: UsersModalProps) {
                 <img 
                   src={user.imageUrl || "/assets/icons/profile-placeholder.svg"}
                   alt="avatar"
-                  className="w-10 h-10 rounded-full"
+                  className="w-10 h-10 rounded-full object-cover"
                 />
                 <div className="flex flex-col">
                   <h4 className="text-light-1 base-semibold">{user.name}</h4>

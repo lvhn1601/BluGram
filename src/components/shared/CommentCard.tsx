@@ -12,7 +12,7 @@ export default function CommentCard({ comment }: CommentCardProps) {
         <img
           src={comment?.creator?.imageUrl || '/assets/icons/profile-placeholder.svg'}
           alt="creator"
-          className="rounded-full w-7 h-7"
+          className="rounded-full w-7 h-7 object-cover"
         />
       </Link>
 

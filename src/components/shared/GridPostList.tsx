@@ -25,7 +25,7 @@ function GridPostList({ posts, showUser = true }: GridPostListProps) {
           {showUser && (
             <div className="grid-post_user">
               <div className="flex items-center justify-start gap-2 flex-1">
-                <img src={post.creator.imageUrl || '/assets/icons/profile-placeholder.svg'} alt="creator" className="h-8 w-8 rounded-full" />
+                <img src={post.creator.imageUrl || '/assets/icons/profile-placeholder.svg'} alt="creator" className="h-8 w-8 rounded-full object-cover" />
                 <p className="line-clamp-1">{post.creator.name}</p>
               </div>
             </div>

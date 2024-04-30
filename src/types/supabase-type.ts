@@ -228,7 +228,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
-          imageId: string | null
+          imagePath: string | null
           imageUrl: string | null
           name: string | null
           username: string | null
@@ -239,7 +239,7 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
-          imageId?: string | null
+          imagePath?: string | null
           imageUrl?: string | null
           name?: string | null
           username?: string | null
@@ -250,7 +250,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
-          imageId?: string | null
+          imagePath?: string | null
           imageUrl?: string | null
           name?: string | null
           username?: string | null
