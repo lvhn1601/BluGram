@@ -13,6 +13,8 @@ function PostDetails() {
   const { data: post, isPending } = useGetPostById(id || '');
   const { user } = useUserContext();
 
+  console.log(post)
+
   const handleDeletePost = () => {
 
   }
@@ -76,7 +78,14 @@ function PostDetails() {
             <hr className="border w-full border-dark-4/80"/>
 
             <div className="flex flex-col flex-1 w-full small-medium lg:base-regular">
-              <p className="text-light-2 p-1">{post?.caption}</p>
+              <p className="p-1">
+                {post?.caption.split('\n').map((line: string) => (
+                  <>
+                    {line}
+                    <br />
+                  </>
+                ))}
+              </p>
               <ul className="flex gap-1 mt-2">
                 {post?.tags.map((tag: string) => (
                   <li key={tag} className="text-light-3">

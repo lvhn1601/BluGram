@@ -16,7 +16,12 @@ function GridPostList({ posts, showUser = true }: GridPostListProps) {
               ? <img src={post.imageUrl} alt="post" className="h-full w-full object-cover" />
               : <div className="flex justify-center p-6 h-full w-full">
                 <div className="flex items-center text-center justify-center h-full w-full text-light-2 overflow-hidden">
-                  {compactString(post.caption, 300)}
+                  {compactString(post.caption, 300).split('\n').map((line: string) => (
+                    <>
+                      {line}
+                      <br />
+                    </>
+                  ))}
                 </div>
               </div>
             }
