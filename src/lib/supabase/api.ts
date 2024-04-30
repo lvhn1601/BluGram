@@ -68,6 +68,16 @@ export async function getCurrentUser() {
             userId
           )
         )
+      ),
+      post_likes!LikesPost_userId_fkey(
+        posts(
+          *,
+          creator (
+            id,
+            name,
+            imageUrl
+          )
+        )
       )
     `)
     .eq('accountId', currentAccount.id)
@@ -414,12 +424,11 @@ export async function getUserById(userId: string) {
         posts!Posts_creator_fkey(*)
       `)
       .eq('id', userId)
+      .order('created_at', { referencedTable: 'posts', ascending: false })
       .limit(1)
       .maybeSingle()
 
     if (error) throw error;
-
-    console.log(user)
 
     return user;
   } catch (error) {

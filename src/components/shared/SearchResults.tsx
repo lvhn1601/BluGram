@@ -1,6 +1,5 @@
 import Loader from "./Loader";
 import GridPostList from "./GridPostList";
-import TextPostList from "./TextPostList";
 
 type SearchResultsProps = {
   isSearchFetching: boolean;
@@ -10,15 +9,9 @@ type SearchResultsProps = {
 function SearchResults({ isSearchFetching, searchedPosts }: SearchResultsProps) {
   if (isSearchFetching) return <Loader />
 
-  const imagePosts = searchedPosts.map((post: any) => post.imageUrl && post).filter((post: any) => post)
-  const textPosts = searchedPosts.map((post: any) => !post.imageUrl && post).filter((post: any) => post)
-
   if (searchedPosts && searchedPosts.length > 0) {
     return (
-      <div className="flex flex-col gap-3">
-        <TextPostList posts={textPosts} />
-        <GridPostList posts={imagePosts} />
-      </div>
+      <GridPostList posts={searchedPosts} />
     )
   }
 

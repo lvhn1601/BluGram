@@ -1,14 +1,12 @@
 import GridPostList from "@/components/shared/GridPostList";
 import Loader from "@/components/shared/Loader";
-import TextPostList from "@/components/shared/TextPostList";
 import { useGetCurrentUser } from "@/lib/react-query/queriesAndMutations";
 
 
 function Saved() {
   const { data: currentUser, isPending } = useGetCurrentUser();
 
-  const imagePosts = currentUser?.saves?.map((post: any) => post.posts.imageUrl && post.posts).filter((post: any) => post)
-  const textPosts = currentUser?.saves?.map((post: any) => !post.posts.imageUrl && post.posts).filter((post: any) => post)
+  const posts = currentUser?.saves?.map((post: any) => post.posts)
 
   return (
     <div className='flex w-full'>
@@ -19,12 +17,8 @@ function Saved() {
         </div>
 
         <div className="flex flex-wrap gap-9 w-full max-w-5xl">
-          <TextPostList posts={textPosts} />
-        </div>
-
-        <div className="flex flex-wrap gap-9 w-full max-w-5xl">
           {isPending ? <Loader />
-          : <GridPostList posts={imagePosts} />
+          : <GridPostList posts={posts} />
           }
         </div>
       </div>

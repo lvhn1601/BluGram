@@ -1,6 +1,5 @@
 import GridPostList from "@/components/shared/GridPostList";
 import Loader from "@/components/shared/Loader";
-import TextPostList from "@/components/shared/TextPostList";
 import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/context/AuthContext";
 import { useGetUserById } from "@/lib/react-query/queriesAndMutations";
@@ -12,6 +11,7 @@ import {
   useParams,
   useLocation,
 } from "react-router-dom";
+import LikedPosts from "./LikedPost";
 
 interface StabBlockProps {
   value: string | number;
@@ -31,10 +31,7 @@ const Profile = () => {
   const { pathname } = useLocation();
 
   const { data: currentUser } = useGetUserById(id || "");
-
-  const imagePosts = currentUser?.posts?.map((post: any) => post.imageUrl && post).filter((post: any) => post)
-  const textPosts = currentUser?.posts?.map((post: any) => !post.imageUrl && post).filter((post: any) => post)
-
+  
   if (!currentUser)
     return (
       <div className="flex-center w-full h-full">
@@ -136,15 +133,12 @@ const Profile = () => {
         <Route
           index
           element={
-            <div className="flex flex-col gap-3">
-              <TextPostList posts={textPosts} showUser={false} />
-              <GridPostList posts={imagePosts} showUser={false} />
-            </div>
+            <GridPostList posts={currentUser?.posts} showUser={false} />
           }
         />
-        {/* {currentUser.id === user.id && (
+        {currentUser.id === user.id && (
           <Route path="/liked-posts" element={<LikedPosts />} />
-        )} */}
+        )}
       </Routes>
       <Outlet />
     </div>
