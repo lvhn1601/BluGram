@@ -2,7 +2,7 @@ import GridPostList from "@/components/shared/GridPostList";
 import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/context/AuthContext";
-import { useGetUserById } from "@/lib/react-query/queriesAndMutations";
+import { useFollowUser, useGetUserById } from "@/lib/react-query/queriesAndMutations";
 import {
   Route,
   Routes,
@@ -31,7 +31,21 @@ const Profile = () => {
   const { pathname } = useLocation();
 
   const { data: currentUser } = useGetUserById(id || "");
-  
+  const { mutate: followUser, isPending: isLoadingFollow } = useFollowUser();
+
+  const followers = currentUser?.followers.map((follower: any) => follower.users)
+  const followings = currentUser?.followings.map((follower: any) => follower.users)
+
+  const followed = followers?.some((flwer: any) => flwer.id === user?.id)
+
+  const handleFollow = () => {
+    followUser({
+      followed,
+      userId: currentUser.id,
+      followBy: user.id
+    })
+  }
+
   if (!currentUser)
     return (
       <div className="flex-center w-full h-full">
@@ -62,8 +76,8 @@ const Profile = () => {
 
             <div className="flex gap-8 mt-10 items-center justify-center xl:justify-start flex-wrap z-20">
               <StatBlock value={currentUser.posts.length} label="Posts" />
-              <StatBlock value={20} label="Followers" />
-              <StatBlock value={20} label="Following" />
+              <StatBlock value={currentUser.followers.length} label="Followers" />
+              <StatBlock value={currentUser.followings.length} label="Following" />
             </div>
 
             <p className="small-medium md:base-medium text-center xl:text-left mt-7 max-w-screen-sm">
@@ -90,8 +104,10 @@ const Profile = () => {
               </Link>
             </div>
             <div className={`${user.id === id && "hidden"}`}>
-              <Button type="button" className="shad-button_primary px-8">
-                Follow
+              <Button type="button" className={`${followed ? 'shad-button_dark_4' : 'shad-button_primary'} px-8`} onClick={handleFollow} disabled={isLoadingFollow}>
+                {isLoadingFollow ? <Loader /> :
+                  followed ? 'Following' : 'Follow'
+                }
               </Button>
             </div>
           </div>

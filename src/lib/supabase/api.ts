@@ -421,7 +421,13 @@ export async function getUserById(userId: string) {
       .from('users')
       .select(`
         *,
-        posts!Posts_creator_fkey(*)
+        posts!Posts_creator_fkey(*),
+        followers:follows!follows_userId_fkey(
+          users!follows_followBy_fkey(id, name, imageUrl)
+        ),
+        followings:follows!follows_followBy_fkey(
+          users!follows_userId_fkey(id, name, imageUrl)
+        )
       `)
       .eq('id', userId)
       .order('created_at', { referencedTable: 'posts', ascending: false })
@@ -433,5 +439,34 @@ export async function getUserById(userId: string) {
     return user;
   } catch (error) {
     console.log(error);
+  }
+}
+
+export async function followAction(followed: boolean, userId: string, followBy: string) {
+  try {
+    if (!followed) {
+      const { error } = await supabase
+        .from('follows')
+        .insert({
+          userId,
+          followBy,
+        })
+      
+      if (error) throw error;
+    } else {
+      const { error } = await supabase
+        .from('follows')
+        .delete()
+        .match({
+          userId,
+          followBy,
+        })
+      
+      if (error) throw error
+    }
+
+    return { id: userId }
+  } catch (error) {
+    console.log(error)
   }
 }
