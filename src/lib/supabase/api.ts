@@ -423,10 +423,10 @@ export async function getUserById(userId: string) {
         *,
         posts!Posts_creator_fkey(*),
         followers:follows!follows_userId_fkey(
-          users!follows_followBy_fkey(id, name, imageUrl)
+          users!follows_followBy_fkey(id, name, username, imageUrl)
         ),
         followings:follows!follows_followBy_fkey(
-          users!follows_userId_fkey(id, name, imageUrl)
+          users!follows_userId_fkey(id, name, username, imageUrl)
         )
       `)
       .eq('id', userId)

@@ -2,7 +2,10 @@ import GridPostList from "@/components/shared/GridPostList";
 import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/context/AuthContext";
-import { useFollowUser, useGetUserById } from "@/lib/react-query/queriesAndMutations";
+import {
+  useFollowUser,
+  useGetUserById,
+} from "@/lib/react-query/queriesAndMutations";
 import {
   Route,
   Routes,
@@ -12,6 +15,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import LikedPosts from "./LikedPost";
+import UsersModal from "@/components/shared/UsersModal";
 
 interface StabBlockProps {
   value: string | number;
@@ -33,18 +37,22 @@ const Profile = () => {
   const { data: currentUser } = useGetUserById(id || "");
   const { mutate: followUser, isPending: isLoadingFollow } = useFollowUser();
 
-  const followers = currentUser?.followers.map((follower: any) => follower.users)
-  const followings = currentUser?.followings.map((follower: any) => follower.users)
+  const followers = currentUser?.followers.map(
+    (follower: any) => follower.users
+  );
+  const followings = currentUser?.followings.map(
+    (follower: any) => follower.users
+  );
 
-  const followed = followers?.some((flwer: any) => flwer.id === user?.id)
+  const followed = followers?.some((flwer: any) => flwer.id === user?.id);
 
   const handleFollow = () => {
     followUser({
       followed,
       userId: currentUser.id,
-      followBy: user.id
-    })
-  }
+      followBy: user.id,
+    });
+  };
 
   if (!currentUser)
     return (
@@ -76,8 +84,18 @@ const Profile = () => {
 
             <div className="flex gap-8 mt-10 items-center justify-center xl:justify-start flex-wrap z-20">
               <StatBlock value={currentUser.posts.length} label="Posts" />
-              <StatBlock value={currentUser.followers.length} label="Followers" />
-              <StatBlock value={currentUser.followings.length} label="Following" />
+              <UsersModal title="Followers" users={followers}>
+                <StatBlock
+                  value={currentUser.followers.length}
+                  label="Followers"
+                />
+              </UsersModal>
+              <UsersModal title="Followings" users={followings}>
+                <StatBlock
+                  value={currentUser.followings.length}
+                  label="Following"
+                />
+              </UsersModal>
             </div>
 
             <p className="small-medium md:base-medium text-center xl:text-left mt-7 max-w-screen-sm">
@@ -91,7 +109,8 @@ const Profile = () => {
                 to={`/update-profile/${currentUser.id}`}
                 className={`h-12 bg-dark-4 px-5 text-light-1 flex-center gap-2 rounded-lg ${
                   user.id !== currentUser.id && "hidden"
-                }`}>
+                }`}
+              >
                 <img
                   src={"/assets/icons/edit.svg"}
                   alt="edit"
@@ -104,10 +123,21 @@ const Profile = () => {
               </Link>
             </div>
             <div className={`${user.id === id && "hidden"}`}>
-              <Button type="button" className={`${followed ? 'shad-button_dark_4' : 'shad-button_primary'} px-8`} onClick={handleFollow} disabled={isLoadingFollow}>
-                {isLoadingFollow ? <Loader /> :
-                  followed ? 'Following' : 'Follow'
-                }
+              <Button
+                type="button"
+                className={`${
+                  followed ? "shad-button_dark_4" : "shad-button_primary"
+                } px-8`}
+                onClick={handleFollow}
+                disabled={isLoadingFollow}
+              >
+                {isLoadingFollow ? (
+                  <Loader />
+                ) : followed ? (
+                  "Following"
+                ) : (
+                  "Follow"
+                )}
               </Button>
             </div>
           </div>
@@ -120,7 +150,8 @@ const Profile = () => {
             to={`/profile/${id}`}
             className={`profile-tab rounded-l-lg ${
               pathname === `/profile/${id}` && "!bg-dark-3"
-            }`}>
+            }`}
+          >
             <img
               src={"/assets/icons/posts.svg"}
               alt="posts"
@@ -133,7 +164,8 @@ const Profile = () => {
             to={`/profile/${id}/liked-posts`}
             className={`profile-tab rounded-r-lg ${
               pathname === `/profile/${id}/liked-posts` && "!bg-dark-3"
-            }`}>
+            }`}
+          >
             <img
               src={"/assets/icons/like.svg"}
               alt="like"
@@ -148,9 +180,7 @@ const Profile = () => {
       <Routes>
         <Route
           index
-          element={
-            <GridPostList posts={currentUser?.posts} showUser={false} />
-          }
+          element={<GridPostList posts={currentUser?.posts} showUser={false} />}
         />
         {currentUser.id === user.id && (
           <Route path="/liked-posts" element={<LikedPosts />} />
