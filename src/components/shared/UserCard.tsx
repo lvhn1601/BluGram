@@ -1,12 +1,21 @@
 import { Link } from "react-router-dom";
 
 import { Button } from "../ui/button";
+import { useUserContext } from "@/context/AuthContext";
+import { useFollowUser } from "@/lib/react-query/queriesAndMutations";
+import Loader from "./Loader";
 
 type UserCardProps = {
   user: any;
 };
 
 const UserCard = ({ user }: UserCardProps) => {
+  const { user: currentUser } = useUserContext();
+
+  const followed = user?.followers.map(
+    (follower: any) => follower.users
+  ).some((flwer: any) => flwer.id === currentUser?.id);
+
   return (
     <Link to={`/profile/${user.id}`} className="user-card">
       <img
@@ -24,8 +33,16 @@ const UserCard = ({ user }: UserCardProps) => {
         </p>
       </div>
 
-      <Button type="button" size="sm" className="shad-button_primary px-5">
-        Follow
+      <Button
+        type="button"
+        className={`${
+          followed ? "shad-button_dark_4" : "shad-button_primary"
+        } px-8`}
+      >
+        {followed ?
+          "Following" :
+          "Follow"
+        }
       </Button>
     </Link>
   );

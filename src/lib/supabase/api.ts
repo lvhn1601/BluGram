@@ -404,7 +404,19 @@ export async function getUsers() {
   try {
     const { data: users, error } = await supabase
       .from('users')
-      .select()
+      .select(`
+        id,
+        name,
+        username,
+        imageUrl,
+        posts!Posts_creator_fkey(*),
+        followers:follows!follows_userId_fkey(
+          users!follows_followBy_fkey(id, name, username, imageUrl)
+        ),
+        followings:follows!follows_followBy_fkey(
+          users!follows_userId_fkey(id, name, username, imageUrl)
+        )
+      `)
       .order('created_at', { ascending: false })
 
     if (error) throw error;
