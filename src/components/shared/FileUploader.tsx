@@ -1,20 +1,63 @@
-import { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { FileWithPath, useDropzone } from 'react-dropzone'
 import { Button } from '../ui/button';
 
 type FileUploaderProps = {
   fieldChange: (FILES: File[]) => void;
   mediaUrl: string;
+  setDelete: React.Dispatch<boolean>;
 }
 
-function FileUploader( { fieldChange, mediaUrl } : FileUploaderProps) {
+function FileUploader( { fieldChange, mediaUrl, setDelete } : FileUploaderProps) {
   const [file, setFile] = useState<File[]>([]);
   const [fileUrl, setFileUrl] = useState(mediaUrl);
 
   const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
-    setFile(acceptedFiles);
-    fieldChange(acceptedFiles);
-    setFileUrl(URL.createObjectURL(acceptedFiles[0]));
+    const fileToResize = acceptedFiles[0]; // Assuming only one file is dropped
+    const reader = new FileReader();
+    reader.readAsDataURL(fileToResize);
+    reader.onload = function(event) {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = function() {
+        const MAX_SIZE = 1024;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height *= MAX_SIZE / width;
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width *= MAX_SIZE / height;
+            height = MAX_SIZE;
+          }
+        }
+
+        // Create a canvas to draw the resized image
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        // Convert the canvas content to a Blob
+        canvas.toBlob((blob: Blob | null) => {
+          if (blob) {
+            // Create a new File object with the resized image
+            const resizedFile = new File([blob], fileToResize.name, { type: 'image/jpeg' });
+
+            // Update state and call fieldChange with the resized file
+            setFile([resizedFile]);
+            fieldChange([resizedFile]);
+            setFileUrl(URL.createObjectURL(resizedFile));
+            setDelete(false);
+          }
+        }, 'image/jpeg');
+      };
+    };
   }, [file])
   
   const {getRootProps, getInputProps} = useDropzone({
@@ -27,6 +70,7 @@ function FileUploader( { fieldChange, mediaUrl } : FileUploaderProps) {
   const handleDeleteFile = () => {
     setFile([]);
     setFileUrl('');
+    setDelete(true);
   }
 
   return (

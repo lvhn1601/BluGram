@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from './queryKeys';
-import { createComment, createPost, createUserAccount, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, postAction, searchPost, signInAccount, signOutAccount, updatePost } from '../supabase/api';
+import { createComment, createPost, createUserAccount, followAction, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, getUsers, postAction, searchPost, signInAccount, signOutAccount, updatePost, updateUser } from '../supabase/api';
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -149,5 +149,48 @@ export const useSearchPosts = (searchTerm: string) => {
     queryKey: [QUERY_KEYS.SEARCH_POSTS, searchTerm],
     queryFn: () => searchPost(searchTerm),
     enabled: !!searchTerm
+  })
+}
+
+export const useGetUsers = () => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USERS],
+    queryFn: () => getUsers(),
+  });
+};
+
+export const useGetUserById = (userId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USER_BY_ID, userId],
+    queryFn: () => getUserById(userId),
+    enabled: !!userId,
+  });
+};
+
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (user: any) => updateUser(user),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_CURRENT_USER],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_BY_ID, data?.id],
+      });
+    },
+  });
+}
+
+export const useFollowUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ followed, userId, followBy }: { followed: boolean; userId: string; followBy: string }) => followAction(followed, userId, followBy),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_BY_ID, data?.id]
+      })
+    }
   })
 }

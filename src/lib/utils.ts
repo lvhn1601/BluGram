@@ -56,3 +56,16 @@ export const multiFormatDateString = (timestamp: string = ""): string => {
 export const checkIsLiked = (likeList: string[], userId: string) => {
   return likeList.includes(userId);
 };
+
+export const compactString = (str: string, maxLength: number) => {
+  if (str.length <= maxLength) {
+    return str;
+  } else {
+    let compactedStr = str.substring(0, maxLength);
+    let lastSpaceIndex = compactedStr.lastIndexOf(' ');
+    if (lastSpaceIndex !== -1) {
+        compactedStr = compactedStr.substring(0, lastSpaceIndex);
+    }
+    return compactedStr + " ...";
+  }
+}

@@ -56,7 +56,28 @@ export async function getCurrentUser() {
     .select(`
       *,
       saves(
-        postId
+        postId,
+        posts(
+          *,
+          creator (
+            id,
+            name,
+            imageUrl
+          ),
+          post_likes(
+            userId
+          )
+        )
+      ),
+      post_likes!LikesPost_userId_fkey(
+        posts(
+          *,
+          creator (
+            id,
+            name,
+            imageUrl
+          )
+        )
       )
     `)
     .eq('accountId', currentAccount.id)
@@ -249,8 +270,8 @@ export async function getPostById(postId: string) {
 
 export async function updatePost(post: any) {
   const hasFileToUpdate = post.file?.length > 0; // check if has file to update
-  const hasDeletedImage = !hasFileToUpdate && post.imageUrl != null; // check if creator deleted old file
-
+  const hasDeletedImage = post.deletedFile; // check if creator deleted old file
+  
   try {
     let imagePath = post.imagePath, imageUrl = post.imageUrl
 
@@ -329,8 +350,6 @@ export async function getInfinitePosts({ pageParam }: { pageParam: number}) {
 
     if (error) throw error;
 
-    console.log(posts)
-
     return posts;
   } catch (error) {
     console.log(error)
@@ -342,17 +361,17 @@ export async function searchPost(searchTerm: string) {
     const { data: posts, error} = await supabase
     .from('posts')
     .select(`
-    *,
-    creator (
-      id,
-      name,
-      imageUrl
-    ),
-    post_likes(
-      userId
-    )
-  `)
-  .ilike('caption', `%${searchTerm}%`)
+      *,
+      creator (
+        id,
+        name,
+        imageUrl
+      ),
+      post_likes(
+        userId
+      )
+    `)
+    .ilike('caption', `%${searchTerm}%`)
 
     if (error) throw error;
 
@@ -366,8 +385,6 @@ export async function searchPost(searchTerm: string) {
 
 export async function createComment(comment: any) {
   try {
-    console.log(comment)
-
     const { data: newComment, error } = await supabase
       .from('comments')
       .insert(comment)
@@ -381,3 +398,127 @@ export async function createComment(comment: any) {
   }
 }
 
+// ----- USERS FUNCTIONS -----
+
+export async function getUsers() {
+  try {
+    const { data: users, error } = await supabase
+      .from('users')
+      .select()
+      .order('created_at', { ascending: false })
+
+    if (error) throw error;
+
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getUserById(userId: string) {
+  try {
+    const { data: user, error } = await supabase
+      .from('users')
+      .select(`
+        *,
+        posts!Posts_creator_fkey(*),
+        followers:follows!follows_userId_fkey(
+          users!follows_followBy_fkey(id, name, username, imageUrl)
+        ),
+        followings:follows!follows_followBy_fkey(
+          users!follows_userId_fkey(id, name, username, imageUrl)
+        )
+      `)
+      .eq('id', userId)
+      .order('created_at', { referencedTable: 'posts', ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (error) throw error;
+
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function updateUser(user: any) {
+  const hasFileToUpdate = user.file?.length > 0; // check if has file to update
+  const hasDeletedImage = user.deletedFile; // check if creator deleted old file
+  
+  try {
+    let imagePath = user.imagePath, imageUrl = user.imageUrl
+
+    if (hasFileToUpdate) {
+      // generate file name for image
+      const newImageName = user.id + Date.now().toString();
+      // upload image into storage
+      const uploadedFile = await uploadFile(user.file[0], newImageName);
+  
+      if (!uploadedFile) throw Error;
+  
+      imagePath = uploadedFile.path;
+  
+      // get the public url of uploaded image
+      const { data: { publicUrl: fileUrl } } = supabase.storage.from('media').getPublicUrl(imagePath)
+
+      imageUrl = fileUrl;
+    }
+
+    const { data: updatedUser, error } = await supabase
+      .from('users')
+      .update({
+        name: user.name,
+        bio: user.bio,
+        imageUrl: hasDeletedImage ? null : imageUrl,
+        imagePath: hasDeletedImage ? null : imagePath,
+      })
+      .eq('id', user.id)
+      .select()
+
+    if (error) {
+      if (hasFileToUpdate)
+        await deleteFile(imagePath)
+
+      throw error;
+    }
+
+    // delete old image when update succesful
+    if (hasFileToUpdate || hasDeletedImage) {
+      await deleteFile(user.imagePath);
+    }
+
+    return updatedUser[0]
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function followAction(followed: boolean, userId: string, followBy: string) {
+  try {
+    if (!followed) {
+      const { error } = await supabase
+        .from('follows')
+        .insert({
+          userId,
+          followBy,
+        })
+      
+      if (error) throw error;
+    } else {
+      const { error } = await supabase
+        .from('follows')
+        .delete()
+        .match({
+          userId,
+          followBy,
+        })
+      
+      if (error) throw error
+    }
+
+    return { id: userId }
+  } catch (error) {
+    console.log(error)
+  }
+}
