@@ -3,6 +3,7 @@ export enum QUERY_KEYS {
   CREATE_USER_ACCOUNT = "createUserAccount",
 
   // USER KEYS
+  GET_USERNAMES = "getUsernames",
   GET_CURRENT_USER = "getCurrentUser",
   GET_USERS = "getUsers",
   GET_USER_BY_ID = "getUserById",

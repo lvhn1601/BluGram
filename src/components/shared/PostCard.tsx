@@ -1,5 +1,5 @@
 import { useUserContext } from "@/context/AuthContext";
-import { multiFormatDateString } from "@/lib/utils";
+import { compactString, multiFormatDateString } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import PostStats from "./PostStats";
 
@@ -47,7 +47,14 @@ function PostCard({ post }: PostCardProps) {
 
       <Link to={`/posts/${post.id}`}>
         <div className="small-medium lg:base-medium py-5">
-          <p>{post.caption}</p>
+          <div>
+            {compactString(post.caption, 600).split('\n').map((line: string, index: number) => (
+              <p key={index}>
+                {line}
+                <br />
+              </p>
+            ))}
+          </div>
           <ul className="flex gap-1 mt-2">
             {post.tags.map((tag: string) => (
               <li key={tag} className="text-light-3">

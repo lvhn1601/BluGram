@@ -323,7 +323,23 @@ export async function updatePost(post: any) {
   }
 }
 
-// todo: deletePost
+export async function deletePost(postId: string, imagePath: string) {
+  try {
+    const { error: deletePostError } = await supabase
+      .from('posts')
+      .delete()
+      .eq('id', postId)
+
+    if (deletePostError) throw deletePostError
+
+    if (imagePath)
+      await deleteFile(imagePath)
+
+    return { status: 'ok' }
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 export async function getInfinitePosts({ pageParam }: { pageParam: number}) {
   try {
@@ -400,11 +416,37 @@ export async function createComment(comment: any) {
 
 // ----- USERS FUNCTIONS -----
 
+export async function getUsernames() {
+  try {
+    const { data: datas, error } = await supabase
+      .from('users')
+      .select('username')
+    
+    if (error) throw error
+
+    return datas.map((data) => data.username);
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export async function getUsers() {
   try {
     const { data: users, error } = await supabase
       .from('users')
-      .select()
+      .select(`
+        id,
+        name,
+        username,
+        imageUrl,
+        posts!Posts_creator_fkey(*),
+        followers:follows!follows_userId_fkey(
+          users!follows_followBy_fkey(id, name, username, imageUrl)
+        ),
+        followings:follows!follows_followBy_fkey(
+          users!follows_userId_fkey(id, name, username, imageUrl)
+        )
+      `)
       .order('created_at', { ascending: false })
 
     if (error) throw error;

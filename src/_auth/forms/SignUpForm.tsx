@@ -24,7 +24,6 @@ import { useCreateUserAccount } from "@/lib/react-query/queriesAndMutations"
 const SignUpForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-
   const { mutateAsync: createUserAccount, isPending: isCreatingUser } = useCreateUserAccount();
 
   // 1. Define your form.
@@ -41,9 +40,7 @@ const SignUpForm = () => {
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof SignUpValidation>) {
     // create user
-    const { data, error } = await createUserAccount(values);
-
-    console.log(data)
+    const { error } = await createUserAccount(values);
 
     if (error) {
       return toast({
@@ -75,7 +72,7 @@ const SignUpForm = () => {
                 <FormControl>
                   <Input type="text" className="shad-input" placeholder="Your full name..." {...field} />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="shad-form_message" />
               </FormItem>
             )}
           />
@@ -88,7 +85,7 @@ const SignUpForm = () => {
                 <FormControl>
                   <Input type="text" className="shad-input" placeholder="Your username..." {...field} />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="shad-form_message" />
               </FormItem>
             )}
           />
@@ -101,7 +98,7 @@ const SignUpForm = () => {
                 <FormControl>
                   <Input type="email" className="shad-input" placeholder="Your email..." {...field} />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="shad-form_message" />
               </FormItem>
             )}
           />
@@ -114,7 +111,7 @@ const SignUpForm = () => {
                 <FormControl>
                   <Input type="password" className="shad-input" placeholder="Password..." {...field} />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="shad-form_message" />
               </FormItem>
             )}
           />
