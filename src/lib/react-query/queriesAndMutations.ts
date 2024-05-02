@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from './queryKeys';
-import { createComment, createPost, createUserAccount, followAction, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, getUsers, postAction, searchPost, signInAccount, signOutAccount, updatePost, updateUser } from '../supabase/api';
+import { createComment, createPost, createUserAccount, deletePost, followAction, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, getUsers, postAction, searchPost, signInAccount, signOutAccount, updatePost, updateUser } from '../supabase/api';
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -116,18 +116,18 @@ export const useCreateComment = () => {
   })
 }
 
-// export const useDeletePost = () => {
-//   const queryClient = useQueryClient();
+export const useDeletePost = () => {
+  const queryClient = useQueryClient();
 
-//   return useMutation({
-//     mutationFn: ({ postId, imageId }: { postId: string, imageId: string }) => deletePost(postId, imageId),
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: [QUERY_KEYS.GET_RECENT_POSTS]
-//       })
-//     }
-//   })
-// }
+  return useMutation({
+    mutationFn: ({ postId, imagePath }: { postId: string, imagePath: string }) => deletePost(postId, imagePath),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_RECENT_POSTS]
+      })
+    }
+  })
+}
 
 export const useGetPosts = () => {
   return useInfiniteQuery({

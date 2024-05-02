@@ -323,7 +323,23 @@ export async function updatePost(post: any) {
   }
 }
 
-// todo: deletePost
+export async function deletePost(postId: string, imagePath: string) {
+  try {
+    const { error: deletePostError } = await supabase
+      .from('posts')
+      .delete()
+      .eq('id', postId)
+
+    if (deletePostError) throw deletePostError
+
+    if (imagePath)
+      await deleteFile(imagePath)
+
+    return { status: 'ok' }
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 export async function getInfinitePosts({ pageParam }: { pageParam: number}) {
   try {
