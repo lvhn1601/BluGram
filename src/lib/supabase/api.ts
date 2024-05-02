@@ -416,6 +416,20 @@ export async function createComment(comment: any) {
 
 // ----- USERS FUNCTIONS -----
 
+export async function getUsernames() {
+  try {
+    const { data: datas, error } = await supabase
+      .from('users')
+      .select('username')
+    
+    if (error) throw error
+
+    return datas.map((data) => data.username);
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export async function getUsers() {
   try {
     const { data: users, error } = await supabase
