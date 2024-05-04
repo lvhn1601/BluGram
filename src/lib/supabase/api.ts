@@ -551,7 +551,7 @@ export async function updateUser(user: any) {
   }
 }
 
-export async function followAction(followed: boolean, userId: string, followBy: string) {
+export async function followAction(followed: boolean, userId: string, followBy: string, username: string) {
   try {
     if (!followed) {
       const { error } = await supabase
@@ -574,7 +574,7 @@ export async function followAction(followed: boolean, userId: string, followBy: 
       if (error) throw error
     }
 
-    return { id: userId }
+    return { username }
   } catch (error) {
     console.log(error)
   }
