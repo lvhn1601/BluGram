@@ -7,7 +7,7 @@ export async function createUserAccount(user: INewUser) {
     email: user.email,
     password: user.password,
     options: {
-      emailRedirectTo: 'http://localhost:5173/signin',
+      emailRedirectTo: import.meta.env.EMAIL_REDIRECT,
     },
   })
 
