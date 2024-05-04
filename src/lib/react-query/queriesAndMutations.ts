@@ -176,7 +176,7 @@ export const useUpdateUser = () => {
         queryKey: [QUERY_KEYS.GET_CURRENT_USER],
       });
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_USER_BY_ID, data?.id],
+        queryKey: [QUERY_KEYS.GET_USER_BY_USERNAME, data?.username],
       });
     },
   });
@@ -186,10 +186,10 @@ export const useFollowUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ followed, userId, followBy }: { followed: boolean; userId: string; followBy: string }) => followAction(followed, userId, followBy),
+    mutationFn: ({ followed, userId, followBy, username }: { followed: boolean; userId: string; followBy: string, username: string }) => followAction(followed, userId, followBy, username),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_USER_BY_ID, data?.id]
+        queryKey: [QUERY_KEYS.GET_USER_BY_USERNAME, data?.username]
       })
     }
   })
