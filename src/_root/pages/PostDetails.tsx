@@ -18,8 +18,6 @@ function PostDetails() {
 
   const { mutateAsync: deletePost, isError: deleteError } = useDeletePost();
 
-  console.log(post)
-
   const handleDeletePost = async () => {
     await deletePost({
       postId: post.id,

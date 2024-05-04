@@ -348,7 +348,7 @@ export async function deletePost(postId: string, imagePath: string) {
   }
 }
 
-export async function getInfinitePosts({ pageParam }: { pageParam: number}) {
+export async function getInfinitePosts({ pageParam }: { pageParam: number | null}) {
   try {
     let query = supabase
       .from('posts')
