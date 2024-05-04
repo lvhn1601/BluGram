@@ -55,6 +55,7 @@ export async function getCurrentUser() {
     .from('users')
     .select(`
       *,
+      follows!follows_followBy_fkey(userId),
       saves(
         postId,
         posts(
@@ -185,26 +186,32 @@ export async function deleteFile(filePath: string) {
 }
 
 export async function getRecentPosts() {
-  const { data: posts, error } = await supabase
-    .from('posts')
-    .select(`
-      *,
-      creator (
-        id,
-        name,
-        imageUrl
-      ),
-      post_likes(
-        userId
-      ),
-      comments(id)
-    `)
-    .limit(20)
-    .order('created_at', { ascending: false })
+  try {
+    let query = supabase
+      .from('posts')
+      .select(`
+        *,
+        creator (
+          id,
+          name,
+          imageUrl
+        ),
+        post_likes(
+          userId
+        ),
+        comments(id)
+      `)
+      .limit(20)
+      .order('created_at', { ascending: false })
 
-  if (error) throw error;
+    const { data: posts, error } = await query;
 
-  return posts;
+    if (error) throw error;
+
+    return posts;
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 export async function postAction(action: string, userId: string, postId: string, liked: boolean) {
@@ -254,7 +261,7 @@ export async function getPostById(postId: string) {
         id,
         details,
         created_at,
-        creator:users!Comments_userId_fkey(id, name, imageUrl)
+        creator:users!Comments_userId_fkey(id, name, username, imageUrl)
       )
     `)
     .eq('id', postId)
@@ -343,7 +350,7 @@ export async function deletePost(postId: string, imagePath: string) {
 
 export async function getInfinitePosts({ pageParam }: { pageParam: number}) {
   try {
-    const { data: posts, error} = await supabase
+    let query = supabase
       .from('posts')
       .select(`
       *,
@@ -359,10 +366,18 @@ export async function getInfinitePosts({ pageParam }: { pageParam: number}) {
     .limit(10)
     .order('created_at', { ascending: false })
     .not('imageUrl', 'is', null)
-    .range(
-      pageParam ? (pageParam - 1) * 10 : 0,
-      pageParam ? pageParam * 10 - 1 : 10
-    )
+
+    // if (follows && follows.length > 0)
+    //   query
+    //     .not('imageUrl', 'is', null)
+    //     .in('creator.id', follows)
+    
+    if (pageParam)
+      query.range((pageParam - 1) * 10, pageParam * 10 - 1)
+    else 
+      query.range(0, 10)
+
+    const { data: posts, error } = await query;
 
     if (error) throw error;
 
@@ -457,7 +472,7 @@ export async function getUsers() {
   }
 }
 
-export async function getUserById(userId: string) {
+export async function getUserByUsername(username: string) {
   try {
     const { data: user, error } = await supabase
       .from('users')
@@ -471,7 +486,7 @@ export async function getUserById(userId: string) {
           users!follows_userId_fkey(id, name, username, imageUrl)
         )
       `)
-      .eq('id', userId)
+      .eq('username', username)
       .order('created_at', { referencedTable: 'posts', ascending: false })
       .limit(1)
       .maybeSingle()

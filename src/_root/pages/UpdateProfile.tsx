@@ -15,7 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 import { useUserContext } from "@/context/AuthContext";
 import { ProfileValidation } from "@/lib/validation";
-import { useGetUserById, useUpdateUser } from "@/lib/react-query/queriesAndMutations";
+import { useGetUserByUsername, useUpdateUser } from "@/lib/react-query/queriesAndMutations";
 import Loader from "@/components/shared/Loader";
 import FileUploader from "@/components/shared/FileUploader";
 import { useState } from "react";
@@ -26,7 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 const UpdateProfile = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { username } = useParams();
   const { user, setUser } = useUserContext();
   const [deletedFile, setDeletedFile] = useState(false);
 
@@ -42,7 +42,7 @@ const UpdateProfile = () => {
   });
 
   // Queries
-  const { data: currentUser } = useGetUserById(id || "");
+  const { data: currentUser } = useGetUserByUsername(username || "");
   const { mutateAsync: updateUser, isPending: isLoadingUpdate } = useUpdateUser();
 
   if (!currentUser)
@@ -77,7 +77,7 @@ const UpdateProfile = () => {
       imageUrl: updatedUser?.imageUrl,
     });
 
-    return navigate(`/profile/${id}`);
+    return navigate(`/profile/${username}`);
   };
 
   return (
