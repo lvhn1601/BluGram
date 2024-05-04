@@ -51,6 +51,7 @@ const Profile = () => {
       followed,
       userId: currentUser.id,
       followBy: user.id,
+      username: currentUser.username,
     });
   };
 

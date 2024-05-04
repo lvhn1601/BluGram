@@ -348,7 +348,7 @@ export async function deletePost(postId: string, imagePath: string) {
   }
 }
 
-export async function getInfinitePosts({ pageParam }: { pageParam: number}) {
+export async function getInfinitePosts({ pageParam }: { pageParam: number | null}) {
   try {
     let query = supabase
       .from('posts')
@@ -551,7 +551,7 @@ export async function updateUser(user: any) {
   }
 }
 
-export async function followAction(followed: boolean, userId: string, followBy: string) {
+export async function followAction(followed: boolean, userId: string, followBy: string, username: string) {
   try {
     if (!followed) {
       const { error } = await supabase
@@ -574,7 +574,7 @@ export async function followAction(followed: boolean, userId: string, followBy: 
       if (error) throw error
     }
 
-    return { id: userId }
+    return { username }
   } catch (error) {
     console.log(error)
   }
