@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { SignUpValidation } from "@/lib/validation"
 import Loader from "@/components/shared/Loader"
 import { Link, useNavigate } from "react-router-dom"
-import { useCreateUserAccount } from "@/lib/react-query/queriesAndMutations"
+import { useCreateUserAccount, useGetUsernames } from "@/lib/react-query/queriesAndMutations"
  
 
 
@@ -25,6 +25,7 @@ const SignUpForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { mutateAsync: createUserAccount, isPending: isCreatingUser } = useCreateUserAccount();
+  const { data: listUsernames, isLoading } = useGetUsernames();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignUpValidation>>({
@@ -36,9 +37,16 @@ const SignUpForm = () => {
       password: '',
     },
   })
+
+  console.log(listUsernames);
  
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof SignUpValidation>) {
+    if (listUsernames?.includes(values.username))
+      return toast({
+        title: 'Username already exist! Try another username...',
+      })
+
     // create user
     const { error } = await createUserAccount(values);
 
@@ -55,12 +63,15 @@ const SignUpForm = () => {
     })
   }
 
+  if (isLoading)
+    return <Loader />
+
   return (
     <Form {...form}>
       <div className="sm:w-420 flex flex-center flex-col">
-        <img src="/assets/images/logo.svg" alt="logo" />
+        <img src="/assets/images/logo.svg" alt="logo" className="h-16" />
         <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">Create new account</h2>
-        <p className="text-light-3 small-medium md:base-regular mt-2">To use Instagram, please enter your details</p>
+        <p className="text-light-3 small-medium md:base-regular mt-2">To use BluGram, please enter your details</p>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4">
           <FormField

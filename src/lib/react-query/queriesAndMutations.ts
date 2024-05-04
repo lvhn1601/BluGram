@@ -1,6 +1,13 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from './queryKeys';
-import { createComment, createPost, createUserAccount, deletePost, followAction, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserByUsername, getUsers, postAction, searchPost, signInAccount, signOutAccount, updatePost, updateUser } from '../supabase/api';
+import { createComment, createPost, createUserAccount, deletePost, followAction, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserByUsername, getUsernames, getUsers, postAction, searchPost, signInAccount, signOutAccount, updatePost, updateUser } from '../supabase/api';
+
+export const useGetUsernames = () => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USERNAMES],
+    queryFn: getUsernames
+  })
+}
 
 export const useCreateUserAccount = () => {
   return useMutation({
