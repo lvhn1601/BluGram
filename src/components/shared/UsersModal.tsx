@@ -21,7 +21,7 @@ export function UsersModal({ children, title, users }: UsersModalProps) {
         <ul className="flex flex-col overflow-y-scroll h-full justify-start px-5 custom-scrollbar">
           {users.map((user: any) => (
             <li key={user.id} className="w-full my-1">
-              <Link to={`/profile/${user.id}`} className="flex flex-row items-center gap-3 w-full hover:bg-dark-3 rounded-md p-2">
+              <Link to={`/profile/${user.username}`} className="flex flex-row items-center gap-3 w-full hover:bg-dark-3 rounded-md p-2">
                 <img 
                   src={user.imageUrl || "/assets/icons/profile-placeholder.svg"}
                   alt="avatar"

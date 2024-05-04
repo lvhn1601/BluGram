@@ -50,7 +50,7 @@ function PostDetails() {
 
           <div className="post_details-info">
             <div className="flex-between w-full">
-              <Link to={`/profile/${post?.creator.id}`} className="flex items-center gap-3">
+              <Link to={`/profile/${post?.creator.username}`} className="flex items-center gap-3">
                 <img
                   src={post?.creator?.imageUrl || '/assets/icons/profile-placeholder.svg'}
                   alt="creator"

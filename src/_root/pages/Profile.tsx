@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/context/AuthContext";
 import {
   useFollowUser,
-  useGetUserById,
+  useGetUserByUsername,
 } from "@/lib/react-query/queriesAndMutations";
 import {
   Route,
@@ -30,11 +30,11 @@ const StatBlock = ({ value, label }: StabBlockProps) => (
 );
 
 const Profile = () => {
-  const { id } = useParams();
+  const { username } = useParams();
   const { user } = useUserContext();
   const { pathname } = useLocation();
 
-  const { data: currentUser } = useGetUserById(id || "");
+  const { data: currentUser } = useGetUserByUsername(username || "");
   const { mutate: followUser, isPending: isLoadingFollow } = useFollowUser();
 
   const followers = currentUser?.followers.map(
@@ -106,7 +106,7 @@ const Profile = () => {
           <div className="flex justify-center gap-4">
             <div className={`${user.id !== currentUser.id && "hidden"}`}>
               <Link
-                to={`/update-profile/${currentUser.id}`}
+                to={`/update-profile/${username}`}
                 className={`h-12 bg-dark-4 px-5 text-light-1 flex-center gap-2 rounded-lg ${
                   user.id !== currentUser.id && "hidden"
                 }`}
@@ -122,7 +122,7 @@ const Profile = () => {
                 </p>
               </Link>
             </div>
-            <div className={`${user.id === id && "hidden"}`}>
+            <div className={`${user.id === currentUser.id && "hidden"}`}>
               <Button
                 type="button"
                 className={`${
@@ -147,9 +147,9 @@ const Profile = () => {
       {currentUser.id === user.id && (
         <div className="flex max-w-5xl w-full">
           <Link
-            to={`/profile/${id}`}
+            to={`/profile/${username}`}
             className={`profile-tab rounded-l-lg ${
-              pathname === `/profile/${id}` && "!bg-dark-3"
+              pathname === `/profile/${username}` && "!bg-dark-3"
             }`}
           >
             <img
@@ -161,9 +161,9 @@ const Profile = () => {
             Posts
           </Link>
           <Link
-            to={`/profile/${id}/liked-posts`}
+            to={`/profile/${username}/liked-posts`}
             className={`profile-tab rounded-r-lg ${
-              pathname === `/profile/${id}/liked-posts` && "!bg-dark-3"
+              pathname === `/profile/${username}/liked-posts` && "!bg-dark-3"
             }`}
           >
             <img
