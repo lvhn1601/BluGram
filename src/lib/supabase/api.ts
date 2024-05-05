@@ -194,6 +194,7 @@ export async function getRecentPosts() {
         creator (
           id,
           name,
+          username,
           imageUrl
         ),
         post_likes(
@@ -252,6 +253,7 @@ export async function getPostById(postId: string) {
       creator (
         id,
         name,
+        username,
         imageUrl
       ),
       post_likes(
