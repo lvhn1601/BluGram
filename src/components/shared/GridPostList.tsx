@@ -10,7 +10,7 @@ function GridPostList({ posts, showUser = true }: GridPostListProps) {
   return (
     <ul className="grid-container">
       {posts?.map((post) => (
-        <li key={post.id} className="relative min-w-80 aspect-square">
+        <li key={post.id} className="relative aspect-square">
           <Link to={`/posts/${post.id}`} className="grid-post_link">
             {post.imageUrl
               ? <img src={post.imageUrl} alt="post" className="h-full w-full object-cover" />

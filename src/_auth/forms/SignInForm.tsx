@@ -46,7 +46,11 @@ const SignInForm = () => {
     })
 
     if (!session) {
-      return toast({title: 'Invalid email or password!'})
+      return toast({
+        title: 'Sign in failed!',
+        description: 'Invalid email or password...',
+        variant: "destructive"
+      })
     }
 
     const isLoggedIn = await checkAuthUser();
@@ -55,7 +59,11 @@ const SignInForm = () => {
       form.reset();
       navigate('/');
     } else {
-      toast({title: 'Sign up failed. Please try again.'});
+      toast({
+        title: 'Sign in failed!',
+        description: 'Please try again...',
+        variant: "destructive"
+      })
     }
   }
 

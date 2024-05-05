@@ -37,14 +37,14 @@ const SignUpForm = () => {
       password: '',
     },
   })
-
-  console.log(listUsernames);
  
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof SignUpValidation>) {
     if (listUsernames?.includes(values.username))
       return toast({
-        title: 'Username already exist! Try another username...',
+        title: 'Username already exist!',
+        description: 'Try again with other username...',
+        variant: "destructive"
       })
 
     // create user
@@ -52,14 +52,17 @@ const SignUpForm = () => {
 
     if (error) {
       return toast({
-        title: error?.message,
+        title: 'Sign up failed!',
+        description: error?.message,
+        variant: "destructive"
       })
     }
 
     navigate('/signin');
 
     return toast({
-      title: 'Sign up successfully! Please check your email for vertification!',
+      title: 'Sign up successfully!',
+      description: 'Please check your email for vertification...',
     })
   }
 

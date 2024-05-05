@@ -57,6 +57,7 @@ function PostForm({ post, action }: PostFormProps) {
       if (!updatedPost) {
         toast({
           title: 'Update Post failed. Please try again!',
+          variant: "destructive",
         })
       }
 
