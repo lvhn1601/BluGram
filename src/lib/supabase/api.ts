@@ -373,11 +373,11 @@ export async function getInfinitePosts({ pageParam }: { pageParam: number | null
     //   query
     //     .not('imageUrl', 'is', null)
     //     .in('creator.id', follows)
-    
+    console.log(pageParam);
     if (pageParam)
       query.range((pageParam - 1) * 10, pageParam * 10 - 1)
     else 
-      query.range(0, 10)
+      query.range(0, 9)
 
     const { data: posts, error } = await query;
 
