@@ -145,12 +145,16 @@ export const useGetPosts = () => {
     queryFn: getInfinitePosts as any,
     initialPageParam: null,
     getNextPageParam: (lastPage: any[]) => {
+      
       if (lastPage && lastPage.length === 0) {
         return null;
       }
 
-      const lastId = lastPage[lastPage.length - 1].id;
-      return lastId;
+      if (lastPage.length / 10 >= 1) {
+        return Math.floor(lastPage.length / 10 + 1)
+      } else {
+        return null;
+      }
     },
   })
 }
